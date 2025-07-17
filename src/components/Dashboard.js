@@ -16,10 +16,23 @@ const Dashboard = () => {
   const [newUrl, setNewUrl] = useState('');
   const [adding, setAdding] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState(null);
+  const [statusPolling, setStatusPolling] = useState(new Set());
 
   useEffect(() => {
     fetchUrls();
   }, []);
+
+  useEffect(() => {
+    // Start polling for URLs that are in crawling state
+    const interval = setInterval(() => {
+      const crawlingUrls = urls.filter(url => url.status === 'crawling' || url.status === 'queued');
+      if (crawlingUrls.length > 0) {
+        fetchUrls();
+      }
+    }, 2000); // Poll every 2 seconds
+
+    return () => clearInterval(interval);
+  }, [urls]);
 
   const fetchUrls = async () => {
     try {
@@ -208,17 +221,78 @@ const Dashboard = () => {
                         <TableCell className="text-sm">{url.title || 'N/A'}</TableCell>
                         <TableCell className="text-sm">{url.html_version || 'N/A'}</TableCell>
                         <TableCell>
-                          <Badge variant={
-                            url.status === 'completed' 
-                              ? 'success' 
-                              : url.status === 'crawling'
-                              ? 'info'
-                              : url.status === 'failed'
-                              ? 'destructive'
-                              : 'warning'
-                          }>
-                            {url.status}
-                          </Badge>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {url.status === 'queued' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#f59e0b',
+                                borderRadius: '50%',
+                                animation: 'pulse 2s infinite'
+                              }} />
+                            )}
+                            {url.status === 'crawling' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#3b82f6',
+                                borderRadius: '50%',
+                                animation: 'pulse 1s infinite'
+                              }} />
+                            )}
+                            {url.status === 'completed' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#10b981',
+                                borderRadius: '50%'
+                              }} />
+                            )}
+                            {url.status === 'failed' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#ef4444',
+                                borderRadius: '50%'
+                              }} />
+                            )}
+                            <div style={{ minWidth: '80px' }}>
+                              <Badge variant={
+                                url.status === 'completed' 
+                                  ? 'success' 
+                                  : url.status === 'crawling'
+                                  ? 'info'
+                                  : url.status === 'failed'
+                                  ? 'destructive'
+                                  : url.status === 'queued'
+                                  ? 'warning'
+                                  : 'secondary'
+                              }>
+                                {url.status === 'queued' ? 'Queued' : 
+                                 url.status === 'crawling' ? 'Running' : 
+                                 url.status === 'completed' ? 'Done' : 
+                                 url.status === 'failed' ? 'Error' : 
+                                 url.status}
+                              </Badge>
+                              {url.status === 'crawling' && (
+                                <div style={{ 
+                                  width: '100%', 
+                                  height: '4px', 
+                                  backgroundColor: '#e5e7eb',
+                                  borderRadius: '2px',
+                                  marginTop: '4px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{ 
+                                    width: '100%', 
+                                    height: '100%',
+                                    backgroundColor: '#3b82f6',
+                                    animation: 'progress-bar 2s infinite'
+                                  }} />
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </TableCell>
                         <TableCell className="text-sm">{url.internal_links + url.external_links}</TableCell>
                         <TableCell>

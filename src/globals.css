@@ -117,3 +117,25 @@ tr:hover {
 .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
 .space-y-10 > * + * { margin-top: 10px; }
 .space-y-20 > * + * { margin-top: 20px; }
+
+/* Animation for status indicators */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes progress-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
