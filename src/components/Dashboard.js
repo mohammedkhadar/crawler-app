@@ -134,7 +134,7 @@ const Dashboard = () => {
         <div className="container">
           <div className="flex justify-between items-center py-4 md:py-6">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-primary">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-info bg-clip-text text-transparent">
                 Web Crawler Dashboard
               </h1>
             </div>
@@ -191,7 +191,7 @@ const Dashboard = () => {
               <Button
                 type="submit"
                 disabled={adding}
-                variant="default"
+                variant="gradient"
                 className="h-10 px-4"
               >
                 <Plus className="h-4 w-4 mr-2" />
