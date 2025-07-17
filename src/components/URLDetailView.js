@@ -264,10 +264,11 @@ const URLDetailView = ({ url, onClose }) => {
                             href={link.link_url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-sm font-medium break-all text-blue-600 hover:text-blue-800 underline"
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800 underline"
                           >
-                            {link.link_url}
+                            Link{index + 1}
                           </a>
+                          <p className="text-xs text-muted-foreground mt-1 break-all">{link.link_url}</p>
                           {link.error_message && (
                             <p className="text-xs text-muted-foreground mt-1">{link.error_message}</p>
                           )}
