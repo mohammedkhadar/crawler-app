@@ -13,6 +13,9 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Resolved API response parsing issue in Dashboard component (data.urls vs data)
 - Application now fully functional with login, URL management, and web crawling capabilities
 - Both frontend (port 5000) and backend (port 8000) servers running successfully
+- Added bulk selection functionality with checkboxes for individual and select-all operations
+- Implemented intelligent bulk action buttons: Start/Delete always available, Stop only when active URLs selected
+- Enhanced UX with proper click event separation between checkboxes and detail view navigation
 
 ## User Preferences
 

@@ -252,15 +252,20 @@ const Dashboard = () => {
                     <Play className="h-4 w-4 mr-2" />
                     Start ({selectedIds.size})
                   </Button>
-                  <Button
-                    onClick={() => handleBulkAction('stop')}
-                    disabled={bulkActionLoading}
-                    variant="outline"
-                    size="sm"
-                  >
-                    <Square className="h-4 w-4 mr-2" />
-                    Stop ({selectedIds.size})
-                  </Button>
+                  {urls.some(url => selectedIds.has(url.id) && (url.status === 'crawling' || url.status === 'pending')) && (
+                    <Button
+                      onClick={() => handleBulkAction('stop')}
+                      disabled={bulkActionLoading}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Square className="h-4 w-4 mr-2" />
+                      Stop ({Array.from(selectedIds).filter(id => {
+                        const url = urls.find(u => u.id === id);
+                        return url && (url.status === 'crawling' || url.status === 'pending');
+                      }).length})
+                    </Button>
+                  )}
                   <Button
                     onClick={() => handleBulkAction('delete')}
                     disabled={bulkActionLoading}
