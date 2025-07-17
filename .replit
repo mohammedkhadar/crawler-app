@@ -37,7 +37,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "go run main.go"
+args = "CGO_ENABLED=1 go run main.go"
 waitForPort = 8000
 
 [[workflows.workflow]]

@@ -2,47 +2,19 @@ package models
 
 import (
         "database/sql"
-        "fmt"
         "os"
 
-        _ "github.com/lib/pq"
+        _ "github.com/mattn/go-sqlite3"
 )
 
 func InitDB() (*sql.DB, error) {
-        // Use PostgreSQL connection string from environment
-        dsn := os.Getenv("DATABASE_URL")
-        if dsn == "" {
-                // Fallback to individual PostgreSQL environment variables
-                dbHost := os.Getenv("PGHOST")
-                if dbHost == "" {
-                        dbHost = "localhost"
-                }
-                
-                dbPort := os.Getenv("PGPORT")
-                if dbPort == "" {
-                        dbPort = "5432"
-                }
-                
-                dbUser := os.Getenv("PGUSER")
-                if dbUser == "" {
-                        dbUser = "postgres"
-                }
-                
-                dbPassword := os.Getenv("PGPASSWORD")
-                if dbPassword == "" {
-                        dbPassword = "password"
-                }
-                
-                dbName := os.Getenv("PGDATABASE")
-                if dbName == "" {
-                        dbName = "web_crawler"
-                }
-
-                dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-                        dbHost, dbPort, dbUser, dbPassword, dbName)
+        // Use SQLite database file
+        dbPath := os.Getenv("DB_PATH")
+        if dbPath == "" {
+                dbPath = "./web_crawler.db"
         }
 
-        db, err := sql.Open("postgres", dsn)
+        db, err := sql.Open("sqlite3", dbPath)
         if err != nil {
                 return nil, err
         }

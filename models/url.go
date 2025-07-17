@@ -2,7 +2,6 @@ package models
 
 import (
         "database/sql"
-        "strconv"
         "time"
 
         "github.com/google/uuid"
@@ -45,12 +44,10 @@ func GetURLs(db *sql.DB, page, limit int, search, sortBy, sortOrder string) ([]U
         // Build query
         whereClause := ""
         args := []interface{}{}
-        argIndex := 1
         
         if search != "" {
-                whereClause = "WHERE url LIKE $" + strconv.Itoa(argIndex) + " OR title LIKE $" + strconv.Itoa(argIndex+1)
+                whereClause = "WHERE url LIKE ? OR title LIKE ?"
                 args = append(args, "%"+search+"%", "%"+search+"%")
-                argIndex += 2
         }
 
         // Count total
@@ -65,7 +62,7 @@ func GetURLs(db *sql.DB, page, limit int, search, sortBy, sortOrder string) ([]U
         query := `SELECT id, url, status, created_at, last_crawled, title, html_version, 
                           h1_count, h2_count, h3_count, h4_count, h5_count, h6_count, 
                           internal_links, external_links, broken_links, has_login_form, error_message
-                          FROM urls ` + whereClause + ` ORDER BY ` + sortBy + ` ` + sortOrder + ` LIMIT $` + strconv.Itoa(argIndex) + ` OFFSET $` + strconv.Itoa(argIndex+1)
+                          FROM urls ` + whereClause + ` ORDER BY ` + sortBy + ` ` + sortOrder + ` LIMIT ? OFFSET ?`
         
         args = append(args, limit, offset)
         rows, err := db.Query(query, args...)
