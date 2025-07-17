@@ -110,9 +110,9 @@ const URLDetailView = ({ url, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>URL Details</DialogTitle>
-          <DialogDescription>
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-xl">URL Details</DialogTitle>
+          <DialogDescription className="text-sm">
             Comprehensive analysis for {url.url}
           </DialogDescription>
         </DialogHeader>
@@ -120,28 +120,28 @@ const URLDetailView = ({ url, onClose }) => {
         <div className="space-y-6">
           {/* URL Information */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <Globe className="h-5 w-5" />
                 URL Information
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-sm text-muted-foreground">URL:</span>
-                  <p className="font-medium break-all">{url.url}</p>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <span className="text-sm font-medium text-muted-foreground">URL:</span>
+                  <p className="text-sm break-all">{url.url}</p>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Title:</span>
-                  <p className="font-medium">{url.title || 'N/A'}</p>
+                <div className="space-y-1">
+                  <span className="text-sm font-medium text-muted-foreground">Title:</span>
+                  <p className="text-sm">{url.title || 'N/A'}</p>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">HTML Version:</span>
-                  <p className="font-medium">{url.html_version || 'N/A'}</p>
+                <div className="space-y-1">
+                  <span className="text-sm font-medium text-muted-foreground">HTML Version:</span>
+                  <p className="text-sm">{url.html_version || 'N/A'}</p>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Status:</span>
+                <div className="space-y-1">
+                  <span className="text-sm font-medium text-muted-foreground">Status:</span>
                   <Badge variant={
                     url.status === 'completed' 
                       ? 'success' 
@@ -157,15 +157,15 @@ const URLDetailView = ({ url, onClose }) => {
                     {url.status}
                   </Badge>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Last Crawled:</span>
-                  <p className="font-medium">
+                <div className="space-y-1">
+                  <span className="text-sm font-medium text-muted-foreground">Last Crawled:</span>
+                  <p className="text-sm">
                     {url.last_crawled ? new Date(url.last_crawled).toLocaleString() : 'Never'}
                   </p>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Has Login Form:</span>
-                  <p className="font-medium">{url.has_login_form ? 'Yes' : 'No'}</p>
+                <div className="space-y-1">
+                  <span className="text-sm font-medium text-muted-foreground">Has Login Form:</span>
+                  <p className="text-sm">{url.has_login_form ? 'Yes' : 'No'}</p>
                 </div>
               </div>
             </CardContent>
@@ -173,34 +173,34 @@ const URLDetailView = ({ url, onClose }) => {
 
           {/* Heading Counts */}
           <Card>
-            <CardHeader>
-              <CardTitle>Heading Analysis</CardTitle>
-              <CardDescription>Distribution of HTML heading tags</CardDescription>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Heading Analysis</CardTitle>
+              <CardDescription className="text-sm">Distribution of HTML heading tags</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{url.h1_count || 0}</div>
+            <CardContent className="pt-0">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="text-center space-y-2">
+                  <div className="text-3xl font-bold text-blue-600">{url.h1_count || 0}</div>
                   <div className="text-sm text-muted-foreground">H1 Tags</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{url.h2_count || 0}</div>
+                <div className="text-center space-y-2">
+                  <div className="text-3xl font-bold text-green-600">{url.h2_count || 0}</div>
                   <div className="text-sm text-muted-foreground">H2 Tags</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{url.h3_count || 0}</div>
+                <div className="text-center space-y-2">
+                  <div className="text-3xl font-bold text-purple-600">{url.h3_count || 0}</div>
                   <div className="text-sm text-muted-foreground">H3 Tags</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">{url.h4_count || 0}</div>
+                <div className="text-center space-y-2">
+                  <div className="text-3xl font-bold text-orange-600">{url.h4_count || 0}</div>
                   <div className="text-sm text-muted-foreground">H4 Tags</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">{url.h5_count || 0}</div>
+                <div className="text-center space-y-2">
+                  <div className="text-3xl font-bold text-red-600">{url.h5_count || 0}</div>
                   <div className="text-sm text-muted-foreground">H5 Tags</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-600">{url.h6_count || 0}</div>
+                <div className="text-center space-y-2">
+                  <div className="text-3xl font-bold text-gray-600">{url.h6_count || 0}</div>
                   <div className="text-sm text-muted-foreground">H6 Tags</div>
                 </div>
               </div>
@@ -209,27 +209,27 @@ const URLDetailView = ({ url, onClose }) => {
 
           {/* Links Chart */}
           <Card>
-            <CardHeader>
-              <CardTitle>Links Distribution</CardTitle>
-              <CardDescription>Visual breakdown of internal vs external links</CardDescription>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Links Distribution</CardTitle>
+              <CardDescription className="text-sm">Visual breakdown of internal vs external links</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center space-x-8">
-                <div className="text-center">
+            <CardContent className="pt-0">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+                <div className="flex-shrink-0">
                   <canvas id="linksChart" width="200" height="200"></canvas>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                    <span className="text-sm">Internal Links: {url.internal_links || 0}</span>
+                    <span className="text-sm">Internal Links: <span className="font-semibold">{url.internal_links || 0}</span></span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-red-500 rounded"></div>
-                    <span className="text-sm">External Links: {url.external_links || 0}</span>
+                    <span className="text-sm">External Links: <span className="font-semibold">{url.external_links || 0}</span></span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 bg-orange-500 rounded"></div>
-                    <span className="text-sm">Broken Links: {url.broken_links || 0}</span>
+                    <span className="text-sm">Broken Links: <span className="font-semibold">{url.broken_links || 0}</span></span>
                   </div>
                 </div>
               </div>
@@ -238,34 +238,34 @@ const URLDetailView = ({ url, onClose }) => {
 
           {/* Broken Links */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
                 <AlertCircle className="h-5 w-5" />
                 Broken Links
               </CardTitle>
-              <CardDescription>Links that returned error status codes</CardDescription>
+              <CardDescription className="text-sm">Links that returned error status codes</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               {loading ? (
-                <div className="text-center py-4">
+                <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
                 </div>
               ) : error ? (
-                <div className="text-destructive text-center py-4">{error}</div>
+                <div className="text-destructive text-center py-8">{error}</div>
               ) : brokenLinks.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">No broken links found</p>
+                <p className="text-muted-foreground text-center py-8">No broken links found</p>
               ) : (
-                <div className="space-y-2 max-h-60 overflow-y-auto">
+                <div className="space-y-3 max-h-60 overflow-y-auto">
                   {brokenLinks.map((link, index) => (
-                    <div key={index} className="border rounded p-3">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
+                    <div key={index} className="border rounded-md p-4">
+                      <div className="flex justify-between items-start gap-3">
+                        <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium break-all">{link.link_url}</p>
                           {link.error_message && (
                             <p className="text-xs text-muted-foreground mt-1">{link.error_message}</p>
                           )}
                         </div>
-                        <Badge variant="destructive" className="ml-2">
+                        <Badge variant="destructive" className="flex-shrink-0">
                           {link.status_code}
                         </Badge>
                       </div>
@@ -278,14 +278,14 @@ const URLDetailView = ({ url, onClose }) => {
 
           {url.error_message && (
             <Card className="border-destructive">
-              <CardHeader>
-                <CardTitle className="text-destructive flex items-center gap-2">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-destructive flex items-center gap-2 text-lg">
                   <AlertCircle className="h-5 w-5" />
                   Error Message
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-destructive">{url.error_message}</p>
+              <CardContent className="pt-0">
+                <p className="text-destructive text-sm">{url.error_message}</p>
               </CardContent>
             </Card>
           )}
