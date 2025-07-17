@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Plus, Trash2, RotateCcw, User, LogOut, Moon, Sun } from 'lucide-react';
+import { Plus, Trash2, RotateCcw, User, LogOut } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -16,27 +16,6 @@ const Dashboard = () => {
   const [newUrl, setNewUrl] = useState('');
   const [adding, setAdding] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check for saved theme preference or default to light mode
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    if (!isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
 
   useEffect(() => {
     fetchUrls();
@@ -129,43 +108,39 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b bg-card shadow-sm">
-        <div className="container">
-          <div className="flex justify-between items-center py-4 md:py-6">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-info bg-clip-text text-transparent">
-                Web Crawler Dashboard
-              </h1>
+    <div className="container">
+      <div style={{ borderBottom: '1px solid #ddd', padding: '20px 0', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>
+            Web Crawler Dashboard
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <User style={{ width: '16px', height: '16px' }} />
+              <span style={{ fontSize: '14px', color: '#666' }}>Welcome, {user?.username}</span>
             </div>
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground hidden sm:inline">Welcome, {user?.username}</span>
-              </div>
-              <Button
-                onClick={toggleTheme}
-                variant="outline"
-                size="sm"
-              >
-                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-              <Button
-                onClick={logout}
-                variant="destructive"
-                size="sm"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
-            </div>
+            <Button
+              onClick={logout}
+              variant="destructive"
+              size="sm"
+            >
+              <LogOut style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+              Logout
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="container py-6 md:py-8 space-y-6">
+      <div className="space-y-20">
         {error && (
-          <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-md">
+          <div style={{ 
+            background: '#fee', 
+            border: '1px solid #f99', 
+            color: '#c33',
+            padding: '15px',
+            borderRadius: '4px',
+            marginBottom: '20px'
+          }}>
             {error}
           </div>
         )}
