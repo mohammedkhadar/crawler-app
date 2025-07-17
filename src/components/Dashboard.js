@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import URLDetailView from './URLDetailView';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Plus, Trash2, RotateCcw, User, LogOut } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -96,149 +102,145 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background">
+      <div className="border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <h1 className="text-3xl font-bold text-gray-900">Web Crawler Dashboard</h1>
+            <h1 className="text-3xl font-bold">Web Crawler Dashboard</h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.username}</span>
-              <button
+              <div className="flex items-center space-x-2">
+                <User className="h-4 w-4" />
+                <span className="text-sm text-muted-foreground">Welcome, {user?.username}</span>
+              </div>
+              <Button
                 onClick={logout}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                variant="destructive"
+                size="sm"
               >
+                <LogOut className="h-4 w-4 mr-2" />
                 Logout
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
 
-        <div className="bg-white shadow rounded-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">Add New URL</h2>
-          <form onSubmit={addUrl} className="flex gap-4">
-            <input
-              type="url"
-              value={newUrl}
-              onChange={(e) => setNewUrl(e.target.value)}
-              placeholder="Enter URL to crawl..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-            <button
-              type="submit"
-              disabled={adding}
-              className="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-            >
-              {adding ? 'Adding...' : 'Add URL'}
-            </button>
-          </form>
-        </div>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Add New URL</CardTitle>
+            <CardDescription>Enter a URL to crawl and analyze</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={addUrl} className="flex gap-4">
+              <Input
+                type="url"
+                value={newUrl}
+                onChange={(e) => setNewUrl(e.target.value)}
+                placeholder="Enter URL to crawl..."
+                className="flex-1"
+                required
+              />
+              <Button
+                type="submit"
+                disabled={adding}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                {adding ? 'Adding...' : 'Add URL'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold">URLs ({urls.length})</h2>
-          </div>
-          
-          {urls.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No URLs added yet. Add your first URL above!</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      URL
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      HTML Version
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Links
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+        <Card>
+          <CardHeader>
+            <CardTitle>URLs ({urls.length})</CardTitle>
+            <CardDescription>Click on a row to view detailed analysis</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {urls.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No URLs added yet. Add your first URL above!</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>URL</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>HTML Version</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Links</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {urls.map((url) => (
-                    <tr key={url.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{url.url}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{url.title || 'N/A'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{url.html_version || 'N/A'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    <TableRow key={url.id} className="cursor-pointer" onClick={() => setSelectedUrl(url)}>
+                      <TableCell className="font-medium">
+                        <div className="max-w-xs truncate">{url.url}</div>
+                      </TableCell>
+                      <TableCell>{url.title || 'N/A'}</TableCell>
+                      <TableCell>{url.html_version || 'N/A'}</TableCell>
+                      <TableCell>
+                        <Badge variant={
                           url.status === 'completed' 
-                            ? 'bg-green-100 text-green-800' 
+                            ? 'success' 
                             : url.status === 'crawling'
-                            ? 'bg-blue-100 text-blue-800'
+                            ? 'info'
                             : url.status === 'failed'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
+                            ? 'destructive'
+                            : 'warning'
+                        }>
                           {url.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {url.internal_links + url.external_links}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{url.internal_links + url.external_links}</TableCell>
+                      <TableCell>
                         <div className="flex space-x-2">
-                          <button
+                          <Button
                             onClick={(e) => {
                               e.stopPropagation();
                               crawlUrl(url.id);
                             }}
-                            className="text-indigo-600 hover:text-indigo-900"
+                            variant="ghost"
+                            size="sm"
                           >
+                            <RotateCcw className="h-4 w-4 mr-1" />
                             Crawl
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={(e) => {
                               e.stopPropagation();
                               deleteUrl(url.id);
                             }}
-                            className="text-red-600 hover:text-red-900"
+                            variant="ghost"
+                            size="sm"
                           >
+                            <Trash2 className="h-4 w-4 mr-1" />
                             Delete
-                          </button>
+                          </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
 
         {selectedUrl && (
           <URLDetailView 

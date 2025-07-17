@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { X, ExternalLink, Globe, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 
 const URLDetailView = ({ url, onClose }) => {
+  const [isOpen, setIsOpen] = useState(true);
+  
+  const handleClose = () => {
+    setIsOpen(false);
+    onClose();
+  };
   const { user } = useAuth();
   const [brokenLinks, setBrokenLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,160 +108,190 @@ const URLDetailView = ({ url, onClose }) => {
   }, [loading, url]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">URL Details</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl"
-            >
-              ×
-            </button>
-          </div>
-        </div>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>URL Details</DialogTitle>
+          <DialogDescription>
+            Comprehensive analysis for {url.url}
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
           {/* URL Information */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-lg mb-3">URL Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <span className="text-sm text-gray-600">URL:</span>
-                <p className="font-medium break-all">{url.url}</p>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                URL Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-sm text-muted-foreground">URL:</span>
+                  <p className="font-medium break-all">{url.url}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Title:</span>
+                  <p className="font-medium">{url.title || 'N/A'}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">HTML Version:</span>
+                  <p className="font-medium">{url.html_version || 'N/A'}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Status:</span>
+                  <Badge variant={
+                    url.status === 'completed' 
+                      ? 'success' 
+                      : url.status === 'running'
+                      ? 'info'
+                      : url.status === 'failed'
+                      ? 'destructive'
+                      : 'warning'
+                  }>
+                    {url.status === 'completed' && <CheckCircle className="h-3 w-3 mr-1" />}
+                    {url.status === 'running' && <Clock className="h-3 w-3 mr-1" />}
+                    {url.status === 'failed' && <AlertCircle className="h-3 w-3 mr-1" />}
+                    {url.status}
+                  </Badge>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Last Crawled:</span>
+                  <p className="font-medium">
+                    {url.last_crawled ? new Date(url.last_crawled).toLocaleString() : 'Never'}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Has Login Form:</span>
+                  <p className="font-medium">{url.has_login_form ? 'Yes' : 'No'}</p>
+                </div>
               </div>
-              <div>
-                <span className="text-sm text-gray-600">Title:</span>
-                <p className="font-medium">{url.title || 'N/A'}</p>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">HTML Version:</span>
-                <p className="font-medium">{url.html_version || 'N/A'}</p>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Status:</span>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  url.status === 'completed' 
-                    ? 'bg-green-100 text-green-800' 
-                    : url.status === 'running'
-                    ? 'bg-blue-100 text-blue-800'
-                    : url.status === 'failed'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {url.status}
-                </span>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Last Crawled:</span>
-                <p className="font-medium">
-                  {url.last_crawled ? new Date(url.last_crawled).toLocaleString() : 'Never'}
-                </p>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Has Login Form:</span>
-                <p className="font-medium">{url.has_login_form ? 'Yes' : 'No'}</p>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Heading Counts */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-lg mb-3">Heading Analysis</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{url.h1_count || 0}</div>
-                <div className="text-sm text-gray-600">H1 Tags</div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Heading Analysis</CardTitle>
+              <CardDescription>Distribution of HTML heading tags</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{url.h1_count || 0}</div>
+                  <div className="text-sm text-muted-foreground">H1 Tags</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">{url.h2_count || 0}</div>
+                  <div className="text-sm text-muted-foreground">H2 Tags</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">{url.h3_count || 0}</div>
+                  <div className="text-sm text-muted-foreground">H3 Tags</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-600">{url.h4_count || 0}</div>
+                  <div className="text-sm text-muted-foreground">H4 Tags</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-red-600">{url.h5_count || 0}</div>
+                  <div className="text-sm text-muted-foreground">H5 Tags</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-gray-600">{url.h6_count || 0}</div>
+                  <div className="text-sm text-muted-foreground">H6 Tags</div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{url.h2_count || 0}</div>
-                <div className="text-sm text-gray-600">H2 Tags</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">{url.h3_count || 0}</div>
-                <div className="text-sm text-gray-600">H3 Tags</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">{url.h4_count || 0}</div>
-                <div className="text-sm text-gray-600">H4 Tags</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-600">{url.h5_count || 0}</div>
-                <div className="text-sm text-gray-600">H5 Tags</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-600">{url.h6_count || 0}</div>
-                <div className="text-sm text-gray-600">H6 Tags</div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Links Chart */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-lg mb-3">Links Distribution</h3>
-            <div className="flex items-center justify-center space-x-8">
-              <div className="text-center">
-                <canvas id="linksChart" width="200" height="200"></canvas>
+          <Card>
+            <CardHeader>
+              <CardTitle>Links Distribution</CardTitle>
+              <CardDescription>Visual breakdown of internal vs external links</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center space-x-8">
+                <div className="text-center">
+                  <canvas id="linksChart" width="200" height="200"></canvas>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                    <span className="text-sm">Internal Links: {url.internal_links || 0}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-red-500 rounded"></div>
+                    <span className="text-sm">External Links: {url.external_links || 0}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 bg-orange-500 rounded"></div>
+                    <span className="text-sm">Broken Links: {url.broken_links || 0}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                  <span className="text-sm">Internal Links: {url.internal_links || 0}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-red-500 rounded"></div>
-                  <span className="text-sm">External Links: {url.external_links || 0}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-orange-500 rounded"></div>
-                  <span className="text-sm">Broken Links: {url.broken_links || 0}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Broken Links */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-lg mb-3">Broken Links</h3>
-            {loading ? (
-              <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-              </div>
-            ) : error ? (
-              <div className="text-red-600 text-center py-4">{error}</div>
-            ) : brokenLinks.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No broken links found</p>
-            ) : (
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {brokenLinks.map((link, index) => (
-                  <div key={index} className="bg-white p-3 rounded border">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium break-all">{link.link_url}</p>
-                        {link.error_message && (
-                          <p className="text-xs text-gray-600 mt-1">{link.error_message}</p>
-                        )}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5" />
+                Broken Links
+              </CardTitle>
+              <CardDescription>Links that returned error status codes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                </div>
+              ) : error ? (
+                <div className="text-destructive text-center py-4">{error}</div>
+              ) : brokenLinks.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">No broken links found</p>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {brokenLinks.map((link, index) => (
+                    <div key={index} className="border rounded p-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <p className="text-sm font-medium break-all">{link.link_url}</p>
+                          {link.error_message && (
+                            <p className="text-xs text-muted-foreground mt-1">{link.error_message}</p>
+                          )}
+                        </div>
+                        <Badge variant="destructive" className="ml-2">
+                          {link.status_code}
+                        </Badge>
                       </div>
-                      <span className="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded">
-                        {link.status_code}
-                      </span>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {url.error_message && (
-            <div className="bg-red-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-lg mb-2 text-red-800">Error Message</h3>
-              <p className="text-red-700">{url.error_message}</p>
-            </div>
+            <Card className="border-destructive">
+              <CardHeader>
+                <CardTitle className="text-destructive flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5" />
+                  Error Message
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-destructive">{url.error_message}</p>
+              </CardContent>
+            </Card>
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
