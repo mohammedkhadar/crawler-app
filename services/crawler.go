@@ -85,6 +85,9 @@ func (c *Crawler) CrawlURL(urlID string) {
                 return
         }
 
+        // Add a delay to make crawling slower for testing stop functionality
+        time.Sleep(5 * time.Second)
+
         // Extract data
         data := c.extractData(doc, urlRecord.URL)
 
@@ -96,7 +99,15 @@ func (c *Crawler) CrawlURL(urlID string) {
         default:
         }
 
-        // Check for broken links
+        // Check if job was cancelled
+        select {
+        case <-stopChan:
+                c.updateStatus(urlID, "stopped")
+                return
+        default:
+        }
+
+        // Check for broken links (this takes time, so add cancellation check)
         brokenLinks := c.checkBrokenLinks(doc, urlRecord.URL)
         data["broken_links"] = len(brokenLinks)
 
@@ -117,16 +128,23 @@ func (c *Crawler) CrawlURL(urlID string) {
 }
 
 func (c *Crawler) StopCrawl(urlID string) {
-        c.jobsMutex.RLock()
+        c.jobsMutex.Lock()
         stopChan, exists := c.activeJobs[urlID]
-        c.jobsMutex.RUnlock()
-
         if exists {
                 select {
                 case stopChan <- true:
+                        // Also immediately update status to stopped
+                        c.updateStatus(urlID, "stopped")
                 default:
+                        // If channel is full, force stop by updating status
+                        c.updateStatus(urlID, "stopped")
                 }
+                delete(c.activeJobs, urlID)
+        } else {
+                // If job not found in active jobs, just update status
+                c.updateStatus(urlID, "stopped")
         }
+        c.jobsMutex.Unlock()
 }
 
 func (c *Crawler) extractData(doc *goquery.Document, baseURL string) map[string]interface{} {
