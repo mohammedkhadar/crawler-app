@@ -22,7 +22,7 @@ const Dashboard = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setUrls(data);
+        setUrls(data.urls || []);
       }
     } catch (err) {
       setError('Failed to fetch URLs');
