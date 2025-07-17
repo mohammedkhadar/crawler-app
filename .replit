@@ -1,7 +1,8 @@
-modules = ["nodejs-20", "go"]
+modules = ["nodejs-20", "go", "postgresql-16"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["sqlite"]
 
 [workflows]
 runButton = "Project"
