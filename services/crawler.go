@@ -57,6 +57,7 @@ func (c *Crawler) CrawlURL(urlID string) {
         // Check if job was cancelled
         select {
         case <-stopChan:
+                c.updateStatus(urlID, "stopped")
                 return
         default:
         }
@@ -72,6 +73,7 @@ func (c *Crawler) CrawlURL(urlID string) {
         // Check if job was cancelled
         select {
         case <-stopChan:
+                c.updateStatus(urlID, "stopped")
                 return
         default:
         }
@@ -89,6 +91,7 @@ func (c *Crawler) CrawlURL(urlID string) {
         // Check if job was cancelled
         select {
         case <-stopChan:
+                c.updateStatus(urlID, "stopped")
                 return
         default:
         }

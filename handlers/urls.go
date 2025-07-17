@@ -120,13 +120,8 @@ func (h *URLHandler) StopCrawl(c *gin.Context) {
         
         h.crawler.StopCrawl(id)
         
-        err := models.UpdateURLStatus(h.db, id, "stopped")
-        if err != nil {
-                c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update status"})
-                return
-        }
-
-        c.JSON(http.StatusOK, gin.H{"message": "Crawl stopped"})
+        // Status will be updated by the crawler when it actually stops
+        c.JSON(http.StatusOK, gin.H{"message": "Crawl stop requested"})
 }
 
 func (h *URLHandler) GetStatus(c *gin.Context) {
@@ -164,7 +159,7 @@ func (h *URLHandler) BulkAction(c *gin.Context) {
         case "stop":
                 for _, id := range req.IDs {
                         h.crawler.StopCrawl(id)
-                        models.UpdateURLStatus(h.db, id, "stopped")
+                        // Status will be updated by the crawler when it actually stops
                 }
         case "recrawl":
                 for _, id := range req.IDs {
