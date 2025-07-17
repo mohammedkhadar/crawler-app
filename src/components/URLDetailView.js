@@ -260,7 +260,14 @@ const URLDetailView = ({ url, onClose }) => {
                     <div key={index} className="border rounded-md p-4">
                       <div className="flex justify-between items-start gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium break-all">{link.link_url}</p>
+                          <a 
+                            href={link.link_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-sm font-medium break-all text-blue-600 hover:text-blue-800 underline"
+                          >
+                            {link.link_url}
+                          </a>
                           {link.error_message && (
                             <p className="text-xs text-muted-foreground mt-1">{link.error_message}</p>
                           )}
