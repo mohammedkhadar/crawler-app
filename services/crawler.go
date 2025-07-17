@@ -44,6 +44,9 @@ func (c *Crawler) CrawlURL(urlID string) {
                 c.jobsMutex.Unlock()
         }()
 
+        // Update status to crawling
+        c.updateStatus(urlID, "crawling")
+        
         // Get URL from database
         urlRecord, err := models.GetURLByID(c.db, urlID)
         if err != nil {
@@ -105,6 +108,9 @@ func (c *Crawler) CrawlURL(urlID string) {
                 c.updateError(urlID, fmt.Sprintf("Failed to update database: %v", err))
                 return
         }
+        
+        // Update status to completed
+        c.updateStatus(urlID, "completed")
 }
 
 func (c *Crawler) StopCrawl(urlID string) {
@@ -298,4 +304,9 @@ func (c *Crawler) checkBrokenLinks(doc *goquery.Document, baseURL string) []Brok
 func (c *Crawler) updateError(urlID, errorMsg string) {
         query := `UPDATE urls SET status = 'error', error_message = ? WHERE id = ?`
         c.db.Exec(query, errorMsg, urlID)
+}
+
+func (c *Crawler) updateStatus(urlID, status string) {
+        query := `UPDATE urls SET status = ?, last_crawled = CURRENT_TIMESTAMP WHERE id = ?`
+        c.db.Exec(query, status, urlID)
 }

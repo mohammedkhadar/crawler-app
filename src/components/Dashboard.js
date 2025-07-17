@@ -16,23 +16,35 @@ const Dashboard = () => {
   const [newUrl, setNewUrl] = useState('');
   const [adding, setAdding] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState(null);
-  const [statusPolling, setStatusPolling] = useState(new Set());
+  const [pollingInterval, setPollingInterval] = useState(null);
 
   useEffect(() => {
     fetchUrls();
   }, []);
 
   useEffect(() => {
-    // Start polling for URLs that are in crawling state
+    // Start continuous polling for real-time updates
     const interval = setInterval(() => {
-      const crawlingUrls = urls.filter(url => url.status === 'crawling' || url.status === 'queued');
-      if (crawlingUrls.length > 0) {
-        fetchUrls();
-      }
+      fetchUrls();
     }, 2000); // Poll every 2 seconds
 
-    return () => clearInterval(interval);
-  }, [urls]);
+    setPollingInterval(interval);
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []); // Empty dependency array to prevent recreating interval
+
+  // Stop polling when component unmounts
+  useEffect(() => {
+    return () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+    };
+  }, [pollingInterval]);
 
   const fetchUrls = async () => {
     try {
