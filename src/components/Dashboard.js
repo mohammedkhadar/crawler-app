@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Plus, Trash2, RotateCcw, User, LogOut } from 'lucide-react';
+import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -17,6 +17,8 @@ const Dashboard = () => {
   const [adding, setAdding] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState(null);
   const [pollingInterval, setPollingInterval] = useState(null);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
 
   useEffect(() => {
     fetchUrls();
@@ -107,6 +109,52 @@ const Dashboard = () => {
     }
   };
 
+  const handleBulkAction = async (action) => {
+    if (selectedIds.size === 0) return;
+
+    setBulkActionLoading(true);
+    try {
+      const response = await fetch('/api/urls/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify({
+          action: action,
+          ids: Array.from(selectedIds)
+        }),
+      });
+
+      if (response.ok) {
+        setSelectedIds(new Set());
+        fetchUrls();
+      }
+    } catch (err) {
+      setError(`Failed to ${action} URLs`);
+    } finally {
+      setBulkActionLoading(false);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === urls.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(urls.map(url => url.id)));
+    }
+  };
+
+  const toggleSelectUrl = (id) => {
+    const newSelected = new Set(selectedIds);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
 
 
   if (loading) {
@@ -188,8 +236,43 @@ const Dashboard = () => {
 
         <Card className="card-hover">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">URLs ({urls.length})</CardTitle>
-            <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="text-lg">URLs ({urls.length})</CardTitle>
+                <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
+              </div>
+              {selectedIds.size > 0 && (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => handleBulkAction('start')}
+                    disabled={bulkActionLoading}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Start ({selectedIds.size})
+                  </Button>
+                  <Button
+                    onClick={() => handleBulkAction('stop')}
+                    disabled={bulkActionLoading}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Square className="h-4 w-4 mr-2" />
+                    Stop ({selectedIds.size})
+                  </Button>
+                  <Button
+                    onClick={() => handleBulkAction('delete')}
+                    disabled={bulkActionLoading}
+                    variant="destructive"
+                    size="sm"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete ({selectedIds.size})
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="pt-0">
             {urls.length === 0 ? (
@@ -201,23 +284,52 @@ const Dashboard = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[35%]">URL</TableHead>
+                      <TableHead className="w-[5%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={toggleSelectAll}
+                          className="h-8 w-8 p-0"
+                        >
+                          {selectedIds.size === urls.length && urls.length > 0 ? 
+                            <CheckSquare className="h-4 w-4" /> : 
+                            <UncheckedSquare className="h-4 w-4" />
+                          }
+                        </Button>
+                      </TableHead>
+                      <TableHead className="w-[30%]">URL</TableHead>
                       <TableHead className="w-[20%]">Title</TableHead>
-                      <TableHead className="w-[12%]">HTML Version</TableHead>
+                      <TableHead className="w-[10%]">HTML Version</TableHead>
                       <TableHead className="w-[12%]">Status</TableHead>
                       <TableHead className="w-[8%]">Links</TableHead>
-                      <TableHead className="w-[13%]">Actions</TableHead>
+                      <TableHead className="w-[10%]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {urls.map((url) => (
-                      <TableRow key={url.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedUrl(url)}>
-                        <TableCell className="font-medium">
+                      <TableRow key={url.id} className="hover:bg-muted/50">
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSelectUrl(url.id);
+                            }}
+                            className="h-8 w-8 p-0"
+                          >
+                            {selectedIds.has(url.id) ? 
+                              <CheckSquare className="h-4 w-4" /> : 
+                              <UncheckedSquare className="h-4 w-4" />
+                            }
+                          </Button>
+                        </TableCell>
+                        <TableCell className="font-medium cursor-pointer" onClick={() => setSelectedUrl(url)}>
                           <div className="max-w-xs truncate text-sm">{url.url}</div>
                         </TableCell>
-                        <TableCell className="text-sm">{url.title || 'N/A'}</TableCell>
-                        <TableCell className="text-sm">{url.html_version || 'N/A'}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.title || 'N/A'}</TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.html_version || 'N/A'}</TableCell>
+                        <TableCell className="cursor-pointer" onClick={() => setSelectedUrl(url)}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             {url.status === 'pending' && (
                               <div style={{ 
@@ -291,7 +403,7 @@ const Dashboard = () => {
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="text-sm">{url.internal_links + url.external_links}</TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.internal_links + url.external_links}</TableCell>
                         <TableCell>
                           <div className="flex gap-1">
                             <Button

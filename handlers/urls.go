@@ -156,9 +156,19 @@ func (h *URLHandler) BulkAction(c *gin.Context) {
                 for _, id := range req.IDs {
                         models.DeleteURL(h.db, id)
                 }
+        case "start":
+                for _, id := range req.IDs {
+                        models.UpdateURLStatus(h.db, id, "pending")
+                        go h.crawler.CrawlURL(id)
+                }
+        case "stop":
+                for _, id := range req.IDs {
+                        h.crawler.StopCrawl(id)
+                        models.UpdateURLStatus(h.db, id, "stopped")
+                }
         case "recrawl":
                 for _, id := range req.IDs {
-                        models.UpdateURLStatus(h.db, id, "queued")
+                        models.UpdateURLStatus(h.db, id, "pending")
                         go h.crawler.CrawlURL(id)
                 }
         default:
