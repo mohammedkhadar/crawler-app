@@ -107,22 +107,7 @@ const Dashboard = () => {
     }
   };
 
-  const crawlUrl = async (id) => {
-    try {
-      const response = await fetch(`/api/urls/${id}/crawl`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${user?.token}`,
-        },
-      });
 
-      if (response.ok) {
-        fetchUrls();
-      }
-    } catch (err) {
-      setError('Failed to crawl URL');
-    }
-  };
 
   if (loading) {
     return (
@@ -234,7 +219,7 @@ const Dashboard = () => {
                         <TableCell className="text-sm">{url.html_version || 'N/A'}</TableCell>
                         <TableCell>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            {url.status === 'queued' && (
+                            {url.status === 'pending' && (
                               <div style={{ 
                                 width: '12px', 
                                 height: '12px', 
@@ -260,7 +245,7 @@ const Dashboard = () => {
                                 borderRadius: '50%'
                               }} />
                             )}
-                            {url.status === 'failed' && (
+                            {url.status === 'error' && (
                               <div style={{ 
                                 width: '12px', 
                                 height: '12px', 
@@ -274,16 +259,16 @@ const Dashboard = () => {
                                   ? 'success' 
                                   : url.status === 'crawling'
                                   ? 'info'
-                                  : url.status === 'failed'
+                                  : url.status === 'error'
                                   ? 'destructive'
-                                  : url.status === 'queued'
+                                  : url.status === 'pending'
                                   ? 'warning'
                                   : 'secondary'
                               }>
-                                {url.status === 'queued' ? 'Queued' : 
+                                {url.status === 'pending' ? 'Queued' : 
                                  url.status === 'crawling' ? 'Running' : 
                                  url.status === 'completed' ? 'Done' : 
-                                 url.status === 'failed' ? 'Error' : 
+                                 url.status === 'error' ? 'Error' : 
                                  url.status}
                               </Badge>
                               {url.status === 'crawling' && (
@@ -309,17 +294,6 @@ const Dashboard = () => {
                         <TableCell className="text-sm">{url.internal_links + url.external_links}</TableCell>
                         <TableCell>
                           <div className="flex gap-1">
-                            <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                crawlUrl(url.id);
-                              }}
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2"
-                            >
-                              <RotateCcw className="h-3 w-3" />
-                            </Button>
                             <Button
                               onClick={(e) => {
                                 e.stopPropagation();

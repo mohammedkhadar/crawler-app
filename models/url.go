@@ -91,7 +91,7 @@ func CreateURL(db *sql.DB, urlStr string) (*URL, error) {
         id := uuid.New().String()
         now := time.Now()
 
-        query := `INSERT INTO urls (id, url, status, created_at) VALUES (?, ?, 'queued', ?)`
+        query := `INSERT INTO urls (id, url, status, created_at) VALUES (?, ?, 'pending', ?)`
         _, err := db.Exec(query, id, urlStr, now)
         if err != nil {
                 return nil, err
@@ -100,7 +100,7 @@ func CreateURL(db *sql.DB, urlStr string) (*URL, error) {
         return &URL{
                 ID:        id,
                 URL:       urlStr,
-                Status:    "queued",
+                Status:    "pending",
                 CreatedAt: now,
         }, nil
 }

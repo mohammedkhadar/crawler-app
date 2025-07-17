@@ -65,6 +65,9 @@ func (h *URLHandler) CreateURL(c *gin.Context) {
                 return
         }
 
+        // Automatically start crawling the new URL
+        go h.crawler.CrawlURL(url.ID)
+
         c.JSON(http.StatusCreated, url)
 }
 

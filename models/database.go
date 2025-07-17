@@ -36,7 +36,7 @@ func createTables(db *sql.DB) error {
                 `CREATE TABLE IF NOT EXISTS urls (
                         id VARCHAR(36) PRIMARY KEY,
                         url TEXT NOT NULL,
-                        status VARCHAR(20) DEFAULT 'queued' CHECK (status IN ('queued', 'running', 'completed', 'error', 'stopped')),
+                        status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'crawling', 'completed', 'error', 'stopped')),
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         last_crawled TIMESTAMP NULL,
                         title TEXT,
