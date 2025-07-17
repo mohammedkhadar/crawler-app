@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import { AuthProvider, useAuth } from './hooks/useAuth';
-// import './styles/global.css';
 
 const LoginForm = () => {
   const { login, loading, error } = useAuth();
@@ -14,54 +13,68 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Web Crawler Dashboard
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Please sign in to continue
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <div className="container">
+      <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
+          Web Crawler Dashboard
+        </h2>
+        <p style={{ textAlign: 'center', marginBottom: '30px', color: '#666' }}>
+          Please sign in to continue
+        </p>
+        <form onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">{error}</div>
+            <div style={{ 
+              background: '#fee', 
+              border: '1px solid #fcc', 
+              padding: '10px', 
+              borderRadius: '4px',
+              marginBottom: '20px',
+              color: '#c33'
+            }}>
+              {error}
             </div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <input
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <div style={{ marginBottom: '15px' }}>
+            <input
+              type="text"
+              required
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={{ width: '100%' }}
+            />
           </div>
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
+          <div style={{ marginBottom: '15px' }}>
+            <input
+              type="password"
+              required
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ width: '100%' }}
+            />
           </div>
-          <div className="text-xs text-gray-500 text-center">
+          <button
+            type="submit"
+            disabled={loading}
+            style={{ 
+              width: '100%', 
+              padding: '12px',
+              backgroundColor: loading ? '#ccc' : '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+          <div style={{ 
+            textAlign: 'center', 
+            marginTop: '15px', 
+            fontSize: '12px', 
+            color: '#666' 
+          }}>
             Default credentials: admin / password
           </div>
         </form>
@@ -70,30 +83,22 @@ const LoginForm = () => {
   );
 };
 
+const AppContent = () => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <LoginForm />;
+  }
+  
+  return <Dashboard />;
+};
+
 const App = () => {
   return (
     <AuthProvider>
       <AppContent />
     </AuthProvider>
   );
-};
-
-const AppContent = () => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <LoginForm />;
-  }
-
-  return <Dashboard />;
 };
 
 export default App;

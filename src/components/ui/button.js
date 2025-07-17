@@ -1,46 +1,51 @@
 import React from "react";
-import { Slot } from "@radix-ui/react-slot";
-import { cva } from "class-variance-authority";
-import { cn } from "../../lib/utils";
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md hover:shadow-lg",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm hover:shadow-md",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        gradient: "bg-gradient-to-r from-primary to-info text-primary-foreground hover:from-primary/90 hover:to-info/90 shadow-md hover:shadow-lg",
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
-);
+const Button = ({ variant = "default", size = "default", className, children, ...props }) => {
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'destructive':
+        return { backgroundColor: '#dc3545', color: 'white' };
+      case 'outline':
+        return { backgroundColor: 'transparent', color: '#007bff', border: '1px solid #007bff' };
+      case 'secondary':
+        return { backgroundColor: '#6c757d', color: 'white' };
+      case 'ghost':
+        return { backgroundColor: 'transparent', color: '#333', border: 'none' };
+      default:
+        return { backgroundColor: '#007bff', color: 'white' };
+    }
+  };
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : "button";
+  const getSizeStyles = () => {
+    switch (size) {
+      case 'sm':
+        return { padding: '4px 8px', fontSize: '12px' };
+      case 'lg':
+        return { padding: '12px 24px', fontSize: '16px' };
+      default:
+        return { padding: '8px 16px', fontSize: '14px' };
+    }
+  };
+
   return (
-    <Comp
-      className={cn(buttonVariants({ variant, size, className }))}
-      ref={ref}
+    <button 
+      className={`${className || ''}`}
+      style={{
+        border: '1px solid transparent',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        ...getVariantStyles(),
+        ...getSizeStyles()
+      }}
       {...props}
-    />
+    >
+      {children}
+    </button>
   );
-});
+};
 
-Button.displayName = "Button";
-
-export { Button, buttonVariants };
+export { Button };

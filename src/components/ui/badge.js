@@ -1,37 +1,38 @@
-import React from 'react';
-import { cva } from 'class-variance-authority';
-import { cn } from '../../lib/utils';
+import React from "react";
 
-const badgeVariants = cva(
-  'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset transition-colors',
-  {
-    variants: {
-      variant: {
-        default: 'bg-primary text-primary-foreground ring-primary/20',
-        secondary: 'bg-secondary text-secondary-foreground ring-secondary/20',
-        destructive: 'bg-destructive text-destructive-foreground ring-destructive/20',
-        outline: 'bg-background text-foreground ring-border',
-        success: 'bg-success text-success-foreground ring-success/20',
-        warning: 'bg-warning text-warning-foreground ring-warning/20',
-        info: 'bg-info text-info-foreground ring-info/20',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-    },
-  }
-);
+const Badge = ({ variant = "default", className, children, ...props }) => {
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'success':
+        return { backgroundColor: '#28a745', color: 'white' };
+      case 'info':
+        return { backgroundColor: '#17a2b8', color: 'white' };
+      case 'warning':
+        return { backgroundColor: '#ffc107', color: 'black' };
+      case 'destructive':
+        return { backgroundColor: '#dc3545', color: 'white' };
+      default:
+        return { backgroundColor: '#6c757d', color: 'white' };
+    }
+  };
 
-const Badge = React.forwardRef(({ className, variant, ...props }, ref) => {
   return (
-    <div
-      ref={ref}
-      className={cn(badgeVariants({ variant }), className)}
+    <span 
+      className={`${className || ''}`}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: '500',
+        ...getVariantStyles()
+      }}
       {...props}
-    />
+    >
+      {children}
+    </span>
   );
-});
+};
 
-Badge.displayName = 'Badge';
-
-export { Badge, badgeVariants };
+export { Badge };
