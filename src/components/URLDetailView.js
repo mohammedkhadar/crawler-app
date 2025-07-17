@@ -109,7 +109,7 @@ const URLDetailView = ({ url, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-border">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-xl">URL Details</DialogTitle>
           <DialogDescription className="text-sm">
