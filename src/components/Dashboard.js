@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import URLDetailView from './URLDetailView';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -8,6 +9,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [newUrl, setNewUrl] = useState('');
   const [adding, setAdding] = useState(false);
+  const [selectedUrl, setSelectedUrl] = useState(null);
 
   useEffect(() => {
     fetchUrls();
@@ -182,7 +184,7 @@ const Dashboard = () => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {urls.map((url) => (
-                    <tr key={url.id}>
+                    <tr key={url.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedUrl(url)}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{url.url}</div>
                       </td>
@@ -211,13 +213,19 @@ const Dashboard = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => crawlUrl(url.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              crawlUrl(url.id);
+                            }}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
                             Crawl
                           </button>
                           <button
-                            onClick={() => deleteUrl(url.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteUrl(url.id);
+                            }}
                             className="text-red-600 hover:text-red-900"
                           >
                             Delete
@@ -231,6 +239,13 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+
+        {selectedUrl && (
+          <URLDetailView 
+            url={selectedUrl} 
+            onClose={() => setSelectedUrl(null)} 
+          />
+        )}
       </div>
     </div>
   );
