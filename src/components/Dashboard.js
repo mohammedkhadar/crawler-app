@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Plus, Trash2, RotateCcw, User, LogOut } from 'lucide-react';
+import { Plus, Trash2, RotateCcw, User, LogOut, Moon, Sun } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -16,6 +16,27 @@ const Dashboard = () => {
   const [newUrl, setNewUrl] = useState('');
   const [adding, setAdding] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check for saved theme preference or default to light mode
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   useEffect(() => {
     fetchUrls();
@@ -112,12 +133,23 @@ const Dashboard = () => {
       <div className="border-b bg-card shadow-sm">
         <div className="container">
           <div className="flex justify-between items-center py-4 md:py-6">
-            <h1 className="text-2xl md:text-3xl font-bold">Web Crawler Dashboard</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-info bg-clip-text text-transparent">
+                Web Crawler Dashboard
+              </h1>
+            </div>
             <div className="flex items-center gap-3 md:gap-4">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground hidden sm:inline">Welcome, {user?.username}</span>
               </div>
+              <Button
+                onClick={toggleTheme}
+                variant="outline"
+                size="sm"
+              >
+                {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
               <Button
                 onClick={logout}
                 variant="destructive"
@@ -138,9 +170,12 @@ const Dashboard = () => {
           </div>
         )}
 
-        <Card>
+        <Card className="card-hover">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Add New URL</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Add New URL
+            </CardTitle>
             <CardDescription className="text-sm">Enter a URL to crawl and analyze</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
@@ -156,6 +191,7 @@ const Dashboard = () => {
               <Button
                 type="submit"
                 disabled={adding}
+                variant="gradient"
                 className="h-10 px-4"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -165,7 +201,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-hover">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg">URLs ({urls.length})</CardTitle>
             <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
