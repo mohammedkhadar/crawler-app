@@ -4,6 +4,16 @@
 
 This is a full-stack web application for website analysis and crawling. The system allows users to add URLs for analysis, crawl them to extract various metrics, and view the results through a responsive dashboard with charts and detailed reports.
 
+## Recent Changes
+
+**July 17, 2025**
+- Successfully converted project from TypeScript to JavaScript to resolve compilation issues
+- Switched database from PostgreSQL to SQLite for better compatibility and embedded deployment
+- Fixed webpack configuration with proper host header handling (`allowedHosts: 'all'`)
+- Resolved API response parsing issue in Dashboard component (data.urls vs data)
+- Application now fully functional with login, URL management, and web crawling capabilities
+- Both frontend (port 5000) and backend (port 8000) servers running successfully
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -19,7 +29,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Backend Architecture
 - **Language**: Go 1.21 with Gin framework for HTTP server
-- **Database**: MySQL 8.0 for persistent data storage
+- **Database**: SQLite 3 for embedded persistent data storage
 - **Authentication**: JWT-based authentication system
 - **Web Scraping**: goquery library for HTML parsing and analysis
 - **API Design**: RESTful API with CORS middleware
@@ -56,23 +66,23 @@ Preferred communication style: Simple, everyday language.
 6. **Real-time Updates**: Status updates reflect crawling progress
 
 ### Database Schema
-- **Users**: Authentication and user management
-- **URLs**: Stores URL information and crawl results
+- **URLs**: Stores URL information and crawl results with status tracking
 - **Broken Links**: Tracks broken links found during crawling
+- **Authentication**: Simple JWT-based authentication (no user table needed)
 
 ## External Dependencies
 
 ### Frontend Dependencies
 - React and React DOM for UI framework
-- TypeScript for type safety
-- Tailwind CSS for styling
+- JavaScript (converted from TypeScript for compatibility)
+- Tailwind CSS for styling (with inline CSS fallback)
 - Chart.js for data visualization
 - Webpack for bundling and development server
 - Testing libraries (Jest, React Testing Library)
 
 ### Backend Dependencies
 - Go Gin framework for HTTP server
-- MySQL driver for database connectivity
+- SQLite driver (go-sqlite3) for database connectivity
 - JWT library for authentication
 - goquery for HTML parsing
 - CORS middleware for cross-origin requests
@@ -80,21 +90,21 @@ Preferred communication style: Simple, everyday language.
 ## Deployment Strategy
 
 ### Development Environment
-- Frontend: Webpack dev server on port 5000 with hot reload
+- Frontend: Webpack dev server on port 5000 with hot reload and allowedHosts: 'all'
 - Backend: Go server on port 8000 with API endpoints
-- Database: MySQL 8.0 instance
+- Database: SQLite embedded database file (web_crawler.db)
 - Proxy configuration routes `/api` requests to backend
 
 ### Production Considerations
 - Static file serving for built frontend assets
-- Environment-based configuration for database and JWT secrets
+- Environment-based configuration for database path and JWT secrets
 - CORS configuration for production domains
-- Database connection pooling and optimization
+- SQLite database file persistence and backup
 
 ### Build Process
-- Frontend: Webpack builds to `public/` directory
-- Backend: Go build creates executable binary
-- Database: MySQL schema setup and migrations
+- Frontend: Webpack builds to `public/` directory with automatic HTML injection
+- Backend: Go build creates executable binary with CGO_ENABLED=1 for SQLite
+- Database: SQLite schema created automatically on first run
 - Testing: Automated tests for frontend components
 
 ## Key Features
