@@ -84,6 +84,13 @@ const Dashboard = () => {
       if (response.ok) {
         setNewUrl('');
         fetchUrls();
+        setError(null); // Clear any previous errors
+      } else if (response.status === 409) {
+        // Handle duplicate URL error
+        const errorData = await response.json();
+        setError(errorData.error || 'This URL already exists');
+      } else {
+        setError('Failed to add URL');
       }
     } catch (err) {
       setError('Failed to add URL');

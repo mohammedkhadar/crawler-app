@@ -140,6 +140,25 @@ func GetURLByID(db *sql.DB, id string) (*URL, error) {
         return &url, nil
 }
 
+func GetURLByURL(db *sql.DB, urlStr string) (*URL, error) {
+        query := `SELECT id, url, status, created_at, last_crawled, title, html_version, 
+                          h1_count, h2_count, h3_count, h4_count, h5_count, h6_count, 
+                          internal_links, external_links, broken_links, has_login_form, error_message
+                          FROM urls WHERE url = ?`
+        
+        var url URL
+        err := db.QueryRow(query, urlStr).Scan(&url.ID, &url.URL, &url.Status, &url.CreatedAt,
+                &url.LastCrawled, &url.Title, &url.HTMLVersion, &url.H1Count, &url.H2Count,
+                &url.H3Count, &url.H4Count, &url.H5Count, &url.H6Count, &url.InternalLinks,
+                &url.ExternalLinks, &url.BrokenLinks, &url.HasLoginForm, &url.ErrorMessage)
+        
+        if err != nil {
+                return nil, err
+        }
+
+        return &url, nil
+}
+
 func UpdateURLStatus(db *sql.DB, id, status string) error {
         query := `UPDATE urls SET status = ? WHERE id = ?`
         _, err := db.Exec(query, status, id)

@@ -59,6 +59,13 @@ func (h *URLHandler) CreateURL(c *gin.Context) {
                 return
         }
 
+        // Check if URL already exists
+        existingURL, err := models.GetURLByURL(h.db, req.URL)
+        if err == nil && existingURL != nil {
+                c.JSON(http.StatusConflict, gin.H{"error": "URL already exists"})
+                return
+        }
+
         url, err := models.CreateURL(h.db, req.URL)
         if err != nil {
                 c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create URL"})

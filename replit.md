@@ -17,6 +17,14 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Implemented intelligent bulk action buttons: Start/Delete always available, Stop only when active URLs selected
 - Enhanced UX with proper click event separation between checkboxes and detail view navigation
 
+**July 18, 2025**
+- Enhanced stop functionality with multiple cancellation checkpoints and immediate status updates
+- Added 5-second delays to crawling process to make stop functionality more testable
+- Implemented duplicate URL prevention with backend validation using GetURLByURL function
+- Added proper error handling for duplicate URLs with 409 Conflict status response
+- Updated frontend to display user-friendly error messages for duplicate URL attempts
+- Improved robustness of stop mechanism with forced status updates and job cleanup
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
