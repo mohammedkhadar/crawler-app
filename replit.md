@@ -36,11 +36,6 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Added global search box with fuzzy/prefix matching across all columns, positioned above table
 - Enhanced filtering system with "Clear All" button to reset both global search and column filters
 - Integrated all filtering features with existing sorting and pagination functionality
-- **Modularized frontend code architecture for improved maintainability and reusability**
-- Created separate components: SearchBox, URLForm, Pagination, BulkActions, TableFilters, URLTable, Header
-- Implemented custom hooks: useUrlData for API operations, useTableState for table state management
-- Refactored Dashboard component to use modular components and hooks
-- Improved code organization with clear separation of concerns and reusable components
 
 ## User Preferences
 
