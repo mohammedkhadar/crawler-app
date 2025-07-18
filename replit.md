@@ -32,6 +32,10 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Added button grouping with proper spacing for bulk actions and navigation
 - Updated button styling to use only horizontal padding (padding-x) for cleaner appearance
 - Enhanced HTML version display in table with styled badges for better visibility
+- Implemented comprehensive column filters for URL, Title, Version, Status, and Links
+- Added global search box with fuzzy/prefix matching across all columns, positioned above table
+- Enhanced filtering system with "Clear All" button to reset both global search and column filters
+- Integrated all filtering features with existing sorting and pagination functionality
 
 ## User Preferences
 

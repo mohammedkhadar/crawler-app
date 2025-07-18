@@ -396,33 +396,36 @@ const Dashboard = () => {
                 <CardTitle className="text-lg">URLs ({urls.length})</CardTitle>
                 <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Search all columns..."
-                    value={globalSearch}
-                    onChange={(e) => {
-                      setGlobalSearch(e.target.value);
+            </div>
+            
+            {/* Global Search Box */}
+            <div className="mb-4">
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search all columns..."
+                  value={globalSearch}
+                  onChange={(e) => {
+                    setGlobalSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="pl-10 pr-4 w-full h-9"
+                />
+                {globalSearch && (
+                  <button
+                    onClick={() => {
+                      setGlobalSearch('');
                       setCurrentPage(1);
                     }}
-                    className="pl-10 pr-4 w-64 h-9"
-                  />
-                  {globalSearch && (
-                    <button
-                      onClick={() => {
-                        setGlobalSearch('');
-                        setCurrentPage(1);
-                      }}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
+            
             <div className="flex justify-between items-center">
               {selectedIds.size > 0 && (
                 <div className="btn-group">
