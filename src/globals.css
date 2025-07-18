@@ -31,7 +31,7 @@ button {
   background-color: #007bff;
   color: white;
   cursor: pointer;
-  padding: 10px 16px;
+  padding: 8px 16px;
   margin: 4px;
 }
 
@@ -44,19 +44,22 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Additional button padding classes */
+/* Additional button padding classes - horizontal only */
 .btn-sm {
-  padding: 6px 12px;
+  padding-left: 12px;
+  padding-right: 12px;
   margin: 2px;
 }
 
 .btn-md {
-  padding: 8px 16px;
+  padding-left: 16px;
+  padding-right: 16px;
   margin: 4px;
 }
 
 .btn-lg {
-  padding: 12px 20px;
+  padding-left: 20px;
+  padding-right: 20px;
   margin: 6px;
 }
 
