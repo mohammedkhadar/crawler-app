@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import URLDetailView from './URLDetailView';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
+import { DashboardHeader } from './DashboardHeader';
+import { URLForm } from './URLForm';
+import { URLTable } from './URLTable';
 import { URL } from '../types';
 
 type SortField = 'url' | 'title' | 'html_version' | 'status' | 'links';
@@ -25,8 +22,6 @@ const Dashboard: React.FC = () => {
   const [urls, setUrls] = useState<URL[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [newUrl, setNewUrl] = useState<string>('');
-  const [adding, setAdding] = useState<boolean>(false);
   const [selectedUrl, setSelectedUrl] = useState<URL | null>(null);
   const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -89,39 +84,6 @@ const Dashboard: React.FC = () => {
       setError('Failed to fetch URLs');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const addUrl = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault();
-    if (!newUrl.trim()) return;
-
-    setAdding(true);
-    try {
-      const response = await fetch('/api/urls', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user?.token}`,
-        },
-        body: JSON.stringify({ url: newUrl }),
-      });
-
-      if (response.ok) {
-        setNewUrl('');
-        fetchUrls();
-        setError(null); // Clear any previous errors
-      } else if (response.status === 409) {
-        // Handle duplicate URL error
-        const errorData = await response.json();
-        setError(errorData.error || 'This URL already exists');
-      } else {
-        setError('Failed to add URL');
-      }
-    } catch (err) {
-      setError('Failed to add URL');
-    } finally {
-      setAdding(false);
     }
   };
 
@@ -319,9 +281,39 @@ const Dashboard: React.FC = () => {
     };
   };
 
+  const handleURLAdded = () => {
+    fetchUrls();
+    setError(null);
+  };
+
+  const handleGlobalSearchChange = (value: string) => {
+    setGlobalSearch(value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      url: '',
+      title: '',
+      html_version: '',
+      status: '',
+      links: ''
+    });
+    setGlobalSearch('');
+    setCurrentPage(1);
+  };
+
   const paginatedUrls = getSortedAndPaginatedUrls();
   const paginationInfo = getPaginationInfo();
-
 
   if (loading) {
     return (
@@ -333,28 +325,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="container">
-      <div style={{ borderBottom: '1px solid #ddd', padding: '20px 0', marginBottom: '30px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 'bold', margin: 0 }}>
-            Web Crawler Dashboard
-          </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <User style={{ width: '16px', height: '16px' }} />
-              <span style={{ fontSize: '14px', color: '#666' }}>Welcome, {user?.username}</span>
-            </div>
-            <Button
-              onClick={logout}
-              variant="destructive"
-              size="sm"
-              className="btn-sm"
-            >
-              <LogOut style={{ width: '16px', height: '16px', marginRight: '8px' }} />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader user={user} onLogout={logout} />
 
       <div className="space-y-20">
         {error && (
@@ -370,471 +341,36 @@ const Dashboard: React.FC = () => {
           </div>
         )}
 
-        <Card className="card-hover">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Add New URL
-            </CardTitle>
-            <CardDescription className="text-sm">Enter a URL to crawl and analyze</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <form onSubmit={addUrl} className="flex flex-col sm:flex-row gap-3">
-              <Input
-                type="url"
-                value={newUrl}
-                onChange={(e) => setNewUrl(e.target.value)}
-                placeholder="Enter URL to crawl..."
-                className="flex-1 h-10"
-                required
-              />
-              <Button
-                type="submit"
-                disabled={adding}
-                variant="gradient"
-                className="h-10 px-4 btn-md"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {adding ? 'Adding...' : 'Add URL'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        <URLForm 
+          user={user} 
+          onURLAdded={handleURLAdded} 
+          onError={setError}
+        />
 
-        <Card className="card-hover">
-          <CardHeader className="pb-4">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <CardTitle className="text-lg">URLs ({urls.length})</CardTitle>
-                <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
-              </div>
-            </div>
-            
-            {/* Global Search Box */}
-            <div className="mb-4">
-              <div className="flex items-center gap-2 max-w-md">
-                <Input
-                  type="text"
-                  placeholder="Search all columns..."
-                  value={globalSearch}
-                  onChange={(e) => {
-                    setGlobalSearch(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="flex-1 h-9"
-                />
-                {globalSearch && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setGlobalSearch('');
-                      setCurrentPage(1);
-                    }}
-                    className="h-9 px-3 flex-shrink-0"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center pt-6 mt-4">
-              {selectedIds.size > 0 && (
-                <div className="btn-group">
-                  <Button
-                    onClick={() => handleBulkAction('start')}
-                    disabled={bulkActionLoading}
-                    variant="outline"
-                    size="sm"
-                    className="btn-sm"
-                  >
-                    <Play className="h-4 w-4 mr-2" />
-                    Start ({selectedIds.size})
-                  </Button>
-                  {urls.some(url => selectedIds.has(url.id) && (url.status === 'crawling' || url.status === 'pending')) && (
-                    <Button
-                      onClick={() => handleBulkAction('stop')}
-                      disabled={bulkActionLoading}
-                      variant="outline"
-                      size="sm"
-                      className="btn-sm"
-                    >
-                      <Square className="h-4 w-4 mr-2" />
-                      Stop ({Array.from(selectedIds).filter(id => {
-                        const url = urls.find(u => u.id === id);
-                        return url && (url.status === 'crawling' || url.status === 'pending');
-                      }).length})
-                    </Button>
-                  )}
-                  <Button
-                    onClick={() => handleBulkAction('delete')}
-                    disabled={bulkActionLoading}
-                    variant="destructive"
-                    size="sm"
-                    className="btn-sm"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete ({selectedIds.size})
-                  </Button>
-                </div>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {urls.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">No URLs added yet. Add your first URL above!</p>
-              </div>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[5%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={toggleSelectAll}
-                          className="h-8 w-8 p-0 btn-sm"
-                        >
-                          {selectedIds.size === urls.length && urls.length > 0 ? 
-                            <CheckSquare className="h-4 w-4" /> : 
-                            <UncheckedSquare className="h-4 w-4" />
-                          }
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[30%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSort('url')}
-                          className="h-8 p-0 font-semibold hover:bg-transparent"
-                        >
-                          URL
-                          {sortField === 'url' && (
-                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[20%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSort('title')}
-                          className="h-8 p-0 font-semibold hover:bg-transparent"
-                        >
-                          Title
-                          {sortField === 'title' && (
-                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[10%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSort('html_version')}
-                          className="h-8 p-0 font-semibold hover:bg-transparent"
-                        >
-                          Version
-                          {sortField === 'html_version' && (
-                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[12%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSort('status')}
-                          className="h-8 p-0 font-semibold hover:bg-transparent"
-                        >
-                          Status
-                          {sortField === 'status' && (
-                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[8%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleSort('links')}
-                          className="h-8 p-0 font-semibold hover:bg-transparent"
-                        >
-                          Links
-                          {sortField === 'links' && (
-                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                          )}
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[10%]">Actions</TableHead>
-                    </TableRow>
-                    <TableRow>
-                      <TableHead className="w-[5%]">
-                        {/* Empty cell for checkbox column */}
-                      </TableHead>
-                      <TableHead className="w-[30%]">
-                        <Input
-                          type="text"
-                          placeholder="Filter by URL..."
-                          value={filters.url}
-                          onChange={(e) => handleFilterChange('url', e.target.value)}
-                          className="h-8 text-sm"
-                        />
-                      </TableHead>
-                      <TableHead className="w-[20%]">
-                        <Input
-                          type="text"
-                          placeholder="Filter by title..."
-                          value={filters.title}
-                          onChange={(e) => handleFilterChange('title', e.target.value)}
-                          className="h-8 text-sm"
-                        />
-                      </TableHead>
-                      <TableHead className="w-[10%]">
-                        <Input
-                          type="text"
-                          placeholder="Filter by version..."
-                          value={filters.html_version}
-                          onChange={(e) => handleFilterChange('html_version', e.target.value)}
-                          className="h-8 text-sm"
-                        />
-                      </TableHead>
-                      <TableHead className="w-[12%]">
-                        <select
-                          value={filters.status}
-                          onChange={(e) => handleFilterChange('status', e.target.value)}
-                          className="h-8 w-full px-2 text-sm border rounded"
-                        >
-                          <option value="">All Status</option>
-                          <option value="pending">Pending</option>
-                          <option value="crawling">Crawling</option>
-                          <option value="completed">Completed</option>
-                          <option value="error">Error</option>
-                          <option value="stopped">Stopped</option>
-                        </select>
-                      </TableHead>
-                      <TableHead className="w-[8%]">
-                        <Input
-                          type="number"
-                          placeholder="Links..."
-                          value={filters.links}
-                          onChange={(e) => handleFilterChange('links', e.target.value)}
-                          className="h-8 text-sm"
-                        />
-                      </TableHead>
-                      <TableHead className="w-[10%]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setFilters({
-                              url: '',
-                              title: '',
-                              html_version: '',
-                              status: '',
-                              links: ''
-                            });
-                            setGlobalSearch('');
-                            setCurrentPage(1);
-                          }}
-                          className="h-8 px-2 text-sm"
-                        >
-                          Clear All
-                        </Button>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedUrls.map((url) => (
-                      <TableRow key={url.id} className="hover:bg-muted/50">
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e: React.MouseEvent) => {
-                              e.stopPropagation();
-                              toggleSelectUrl(url.id);
-                            }}
-                            className="h-8 w-8 p-0 btn-sm"
-                          >
-                            {selectedIds.has(url.id) ? 
-                              <CheckSquare className="h-4 w-4" /> : 
-                              <UncheckedSquare className="h-4 w-4" />
-                            }
-                          </Button>
-                        </TableCell>
-                        <TableCell className="font-medium cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                          <div className="table-cell-url text-sm" title={url.url}>{url.url}</div>
-                        </TableCell>
-                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                          <div className="table-cell-title" title={url.title || 'N/A'}>{url.title || 'N/A'}</div>
-                        </TableCell>
-                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                          <div className="table-cell-html-version" title={url.html_version || 'N/A'}>
-                            <span style={{ 
-                              backgroundColor: url.html_version ? '#e3f2fd' : '#f5f5f5',
-                              color: url.html_version ? '#1976d2' : '#666',
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              fontSize: '12px',
-                              fontWeight: '500'
-                            }}>
-                              {url.html_version || 'N/A'}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            {url.status === 'pending' && (
-                              <div style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                backgroundColor: '#f59e0b',
-                                borderRadius: '50%',
-                                animation: 'pulse 2s infinite'
-                              }} />
-                            )}
-                            {url.status === 'crawling' && (
-                              <div style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                backgroundColor: '#3b82f6',
-                                borderRadius: '50%',
-                                animation: 'pulse 1s infinite'
-                              }} />
-                            )}
-                            {url.status === 'completed' && (
-                              <div style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                backgroundColor: '#10b981',
-                                borderRadius: '50%'
-                              }} />
-                            )}
-                            {url.status === 'error' && (
-                              <div style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                backgroundColor: '#ef4444',
-                                borderRadius: '50%'
-                              }} />
-                            )}
-                            <div style={{ minWidth: '80px' }}>
-                              <Badge variant={
-                                url.status === 'completed' 
-                                  ? 'success' 
-                                  : url.status === 'crawling'
-                                  ? 'info'
-                                  : url.status === 'error'
-                                  ? 'destructive'
-                                  : url.status === 'pending'
-                                  ? 'warning'
-                                  : 'secondary'
-                              }>
-                                {url.status === 'pending' ? 'Queued' : 
-                                 url.status === 'crawling' ? 'Running' : 
-                                 url.status === 'completed' ? 'Done' : 
-                                 url.status === 'error' ? 'Error' : 
-                                 url.status}
-                              </Badge>
-                              {url.status === 'crawling' && (
-                                <div style={{ 
-                                  width: '100%', 
-                                  height: '4px', 
-                                  backgroundColor: '#e5e7eb',
-                                  borderRadius: '2px',
-                                  marginTop: '4px',
-                                  overflow: 'hidden'
-                                }}>
-                                  <div style={{ 
-                                    width: '100%', 
-                                    height: '100%',
-                                    backgroundColor: '#3b82f6',
-                                    animation: 'progress-bar 2s infinite'
-                                  }} />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{(url.internal_links || 0) + (url.external_links || 0)}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            <Button
-                              onClick={(e: React.MouseEvent) => {
-                                e.stopPropagation();
-                                deleteUrl(url.id);
-                              }}
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 px-2 text-destructive hover:text-destructive btn-sm"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-            
-            {getFilteredUrls().length > 0 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">
-                    Showing {paginationInfo.startIndex + 1} to {paginationInfo.endIndex} of {paginationInfo.totalItems} entries
-                  </span>
-                  <select 
-                    value={itemsPerPage} 
-                    onChange={(e) => {
-                      setItemsPerPage(parseInt(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="ml-4 px-2 py-1 border rounded text-sm"
-                  >
-                    <option value={5}>5 per page</option>
-                    <option value={10}>10 per page</option>
-                    <option value={25}>25 per page</option>
-                    <option value={50}>50 per page</option>
-                  </select>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="btn-sm"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Previous
-                  </Button>
-                  
-                  <span className="text-sm text-gray-600">
-                    Page {currentPage} of {paginationInfo.totalPages}
-                  </span>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCurrentPage(Math.min(paginationInfo.totalPages, currentPage + 1))}
-                    disabled={currentPage === paginationInfo.totalPages}
-                    className="btn-sm"
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <URLTable
+          urls={urls}
+          paginatedUrls={paginatedUrls}
+          paginationInfo={paginationInfo}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          filters={filters}
+          globalSearch={globalSearch}
+          selectedIds={selectedIds}
+          bulkActionLoading={bulkActionLoading}
+          onSort={handleSort}
+          onFilterChange={handleFilterChange}
+          onGlobalSearchChange={handleGlobalSearchChange}
+          onPageChange={handlePageChange}
+          onItemsPerPageChange={handleItemsPerPageChange}
+          onToggleSelectAll={toggleSelectAll}
+          onToggleSelectUrl={toggleSelectUrl}
+          onBulkAction={handleBulkAction}
+          onDeleteUrl={deleteUrl}
+          onViewDetails={setSelectedUrl}
+          onClearFilters={handleClearFilters}
+        />
 
         {selectedUrl && (
           <URLDetailView 
