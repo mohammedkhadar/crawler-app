@@ -439,7 +439,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="flex justify-between items-center pt-6 mt-4">
+            <div className="flex justify-between items-center">
               {selectedIds.size > 0 && (
                 <div className="btn-group">
                   <Button
