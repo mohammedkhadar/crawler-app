@@ -147,5 +147,3 @@ export const URLTable: React.FC<URLTableProps> = ({
     </Card>
   );
 };
-
-export default URLTable;

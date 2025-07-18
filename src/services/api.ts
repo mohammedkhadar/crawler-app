@@ -95,16 +95,3 @@ class ApiService {
 }
 
 export const apiService = new ApiService();
-
-// Named exports for compatibility with tests
-export const getURLs = () => apiService.get('/api/urls');
-export const createURL = (url: string) => apiService.post('/api/urls', { url });
-export const deleteURL = (id: string) => apiService.delete(`/api/urls/${id}`);
-export const startCrawl = (id: string) => apiService.post(`/api/urls/${id}/crawl`);
-export const stopCrawl = (id: string) => apiService.post(`/api/urls/${id}/stop`);
-export const login = (email: string, password: string) => apiService.post('/api/auth/login', { email, password });
-export const verifyToken = (token: string) => {
-  apiService.setToken(token);
-  return apiService.post('/api/auth/verify');
-};
-export const bulkAction = (action: string, ids: string[]) => apiService.post('/api/urls/bulk', { action, ids });
