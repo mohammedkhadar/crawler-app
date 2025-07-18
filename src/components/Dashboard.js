@@ -423,7 +423,7 @@ const Dashboard = () => {
                           onClick={() => handleSort('html_version')}
                           className="h-8 p-0 font-semibold hover:bg-transparent"
                         >
-                          HTML Version
+                          Version
                           {sortField === 'html_version' && (
                             sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
                           )}
