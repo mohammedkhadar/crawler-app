@@ -27,15 +27,6 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
     return url && (url.status === 'crawling' || url.status === 'pending');
   }).length;
 
-  // Debug logging
-  console.log('URLTableActions - selectedIds:', Array.from(selectedIds));
-  console.log('URLTableActions - hasActiveCrawls:', hasActiveCrawls);
-  console.log('URLTableActions - activeCount:', activeCount);
-  console.log('URLTableActions - selected URLs statuses:', Array.from(selectedIds).map(id => {
-    const url = urls.find(u => u.id === id);
-    return { id, status: url?.status };
-  }));
-
   return (
     <div className="flex justify-between items-center pt-6 mt-4">
       <div className="btn-group">

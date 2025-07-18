@@ -114,8 +114,11 @@ export const URLTable: React.FC<URLTableProps> = ({
                 totalUrls={urls.length}
                 sortField={sortField}
                 sortDirection={sortDirection}
+                filters={filters}
                 onToggleSelectAll={onToggleSelectAll}
                 onSort={onSort}
+                onFilterChange={onFilterChange}
+                onClearFilters={onClearFilters}
               />
               <TableBody>
                 {paginatedUrls.map((url) => (
