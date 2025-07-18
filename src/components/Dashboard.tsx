@@ -122,10 +122,17 @@ const Dashboard: React.FC = () => {
       });
 
       if (response.ok) {
+        const result = await response.json();
+        console.log(`${action} action completed:`, result);
         setSelectedIds(new Set());
         fetchUrls();
+        setError(null); // Clear any previous errors
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || `Failed to ${action} URLs`);
       }
     } catch (err) {
+      console.error(`Error during ${action} action:`, err);
       setError(`Failed to ${action} URLs`);
     } finally {
       setBulkActionLoading(false);
