@@ -401,7 +401,6 @@ const Dashboard = () => {
             {/* Global Search Box */}
             <div className="mb-4">
               <div className="flex items-center gap-2 max-w-md">
-                <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
                 <Input
                   type="text"
                   placeholder="Search all columns..."
