@@ -85,19 +85,19 @@ export const URLTable: React.FC<URLTableProps> = ({
           </div>
         </div>
         
+        <URLTableActions
+          selectedIds={selectedIds}
+          urls={urls}
+          bulkActionLoading={bulkActionLoading}
+          onBulkAction={onBulkAction}
+        />
+        
         <URLTableFilters
           globalSearch={globalSearch}
           onGlobalSearchChange={onGlobalSearchChange}
           filters={filters}
           onFilterChange={onFilterChange}
           onClearAll={onClearFilters}
-        />
-        
-        <URLTableActions
-          selectedIds={selectedIds}
-          urls={urls}
-          bulkActionLoading={bulkActionLoading}
-          onBulkAction={onBulkAction}
         />
       </CardHeader>
       
