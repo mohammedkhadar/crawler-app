@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -32,6 +32,7 @@ const Dashboard = () => {
     status: '',
     links: ''
   });
+  const [globalSearch, setGlobalSearch] = useState('');
 
   useEffect(() => {
     fetchUrls();
@@ -195,9 +196,42 @@ const Dashboard = () => {
     setCurrentPage(1); // Reset to first page when filtering
   };
 
+  // Global search with fuzzy matching
+  const matchesGlobalSearch = (url, searchTerm) => {
+    if (!searchTerm) return true;
+    
+    const searchLower = searchTerm.toLowerCase();
+    const searchableText = [
+      url.url,
+      url.title || '',
+      url.html_version || '',
+      url.status,
+      ((url.internal_links || 0) + (url.external_links || 0)).toString()
+    ].join(' ').toLowerCase();
+    
+    // Simple fuzzy matching: check if all characters in search term appear in order
+    let searchIndex = 0;
+    for (let i = 0; i < searchableText.length && searchIndex < searchLower.length; i++) {
+      if (searchableText[i] === searchLower[searchIndex]) {
+        searchIndex++;
+      }
+    }
+    
+    // Also check for direct substring matches (prefix matching)
+    const directMatch = searchableText.includes(searchLower);
+    
+    return searchIndex === searchLower.length || directMatch;
+  };
+
   // Get filtered URLs
   const getFilteredUrls = () => {
     return urls.filter(url => {
+      // Global search filter
+      if (!matchesGlobalSearch(url, globalSearch)) {
+        return false;
+      }
+      
+      // Column-specific filters
       const matchesUrl = url.url.toLowerCase().includes(filters.url.toLowerCase());
       const matchesTitle = (url.title || '').toLowerCase().includes(filters.title.toLowerCase());
       const matchesHtmlVersion = (url.html_version || '').toLowerCase().includes(filters.html_version.toLowerCase());
@@ -357,11 +391,39 @@ const Dashboard = () => {
 
         <Card className="card-hover">
           <CardHeader className="pb-4">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mb-4">
               <div>
                 <CardTitle className="text-lg">URLs ({urls.length})</CardTitle>
                 <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
               </div>
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Search all columns..."
+                    value={globalSearch}
+                    onChange={(e) => {
+                      setGlobalSearch(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="pl-10 pr-4 w-64 h-9"
+                  />
+                  {globalSearch && (
+                    <button
+                      onClick={() => {
+                        setGlobalSearch('');
+                        setCurrentPage(1);
+                      }}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
               {selectedIds.size > 0 && (
                 <div className="btn-group">
                   <Button
@@ -551,16 +613,20 @@ const Dashboard = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setFilters({
-                            url: '',
-                            title: '',
-                            html_version: '',
-                            status: '',
-                            links: ''
-                          })}
+                          onClick={() => {
+                            setFilters({
+                              url: '',
+                              title: '',
+                              html_version: '',
+                              status: '',
+                              links: ''
+                            });
+                            setGlobalSearch('');
+                            setCurrentPage(1);
+                          }}
                           className="h-8 px-2 text-sm"
                         >
-                          Clear
+                          Clear All
                         </Button>
                       </TableHead>
                     </TableRow>
