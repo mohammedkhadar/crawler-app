@@ -28,14 +28,14 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
   }).length;
 
   return (
-    <div className="flex justify-between items-center pt-6 mt-4">
+    <div className="flex justify-between items-center py-4 mt-4">
       <div className="btn-group">
         <Button
           onClick={() => onBulkAction('start')}
           disabled={bulkActionLoading}
           variant="outline"
           size="sm"
-          className="btn-sm"
+          className="btn-sm py-2"
         >
           <Play className="h-4 w-4 mr-2" />
           Start ({selectedIds.size})
@@ -46,7 +46,7 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
             disabled={bulkActionLoading}
             variant="outline"
             size="sm"
-            className="btn-sm"
+            className="btn-sm py-2"
           >
             <Square className="h-4 w-4 mr-2" />
             Stop ({activeCount})
@@ -57,7 +57,7 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
           disabled={bulkActionLoading}
           variant="destructive"
           size="sm"
-          className="btn-sm"
+          className="btn-sm py-2"
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Delete ({selectedIds.size})
