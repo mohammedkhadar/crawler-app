@@ -37,10 +37,7 @@ A full-stack web application for website analysis and crawling built with React/
 
 ### Running the Application Locally
 
-#### Method 1: Using Replit (Recommended)
-If you're running this on Replit, simply click the "Run" button to start both servers automatically.
-
-#### Method 2: Manual Setup
+#### Method 1: Manual Setup
 
 1. **Clone the repository**
    ```bash
