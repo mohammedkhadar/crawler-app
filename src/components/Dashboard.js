@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
-import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare } from 'lucide-react';
+import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -19,6 +19,12 @@ const Dashboard = () => {
   const [pollingInterval, setPollingInterval] = useState(null);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  
+  // Pagination and sorting state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [sortField, setSortField] = useState('url');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   useEffect(() => {
     fetchUrls();
@@ -162,6 +168,61 @@ const Dashboard = () => {
     setSelectedIds(newSelected);
   };
 
+  // Sorting function
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  // Get sorted and paginated data
+  const getSortedAndPaginatedUrls = () => {
+    // Sort URLs
+    const sorted = [...urls].sort((a, b) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
+      
+      // Handle null/undefined values
+      if (aValue === null || aValue === undefined) aValue = '';
+      if (bValue === null || bValue === undefined) bValue = '';
+      
+      // Convert to string for comparison
+      aValue = String(aValue).toLowerCase();
+      bValue = String(bValue).toLowerCase();
+      
+      if (sortDirection === 'asc') {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
+
+    // Paginate
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return sorted.slice(startIndex, endIndex);
+  };
+
+  // Get pagination info
+  const getPaginationInfo = () => {
+    const totalPages = Math.ceil(urls.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, urls.length);
+    
+    return {
+      totalPages,
+      startIndex,
+      endIndex,
+      totalItems: urls.length
+    };
+  };
+
+  const paginatedUrls = getSortedAndPaginatedUrls();
+  const paginationInfo = getPaginationInfo();
 
 
   if (loading) {
@@ -313,16 +374,64 @@ const Dashboard = () => {
                           }
                         </Button>
                       </TableHead>
-                      <TableHead className="w-[30%]">URL</TableHead>
-                      <TableHead className="w-[20%]">Title</TableHead>
-                      <TableHead className="w-[10%]">HTML Version</TableHead>
-                      <TableHead className="w-[12%]">Status</TableHead>
+                      <TableHead className="w-[30%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSort('url')}
+                          className="h-8 p-0 font-semibold hover:bg-transparent"
+                        >
+                          URL
+                          {sortField === 'url' && (
+                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="w-[20%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSort('title')}
+                          className="h-8 p-0 font-semibold hover:bg-transparent"
+                        >
+                          Title
+                          {sortField === 'title' && (
+                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="w-[10%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSort('html_version')}
+                          className="h-8 p-0 font-semibold hover:bg-transparent"
+                        >
+                          HTML Version
+                          {sortField === 'html_version' && (
+                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableHead>
+                      <TableHead className="w-[12%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSort('status')}
+                          className="h-8 p-0 font-semibold hover:bg-transparent"
+                        >
+                          Status
+                          {sortField === 'status' && (
+                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableHead>
                       <TableHead className="w-[8%]">Links</TableHead>
                       <TableHead className="w-[10%]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {urls.map((url) => (
+                    {paginatedUrls.map((url) => (
                       <TableRow key={url.id} className="hover:bg-muted/50">
                         <TableCell>
                           <Button
@@ -454,6 +563,57 @@ const Dashboard = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            )}
+            
+            {urls.length > 0 && (
+              <div className="flex items-center justify-between px-4 py-4 border-t">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">
+                    Showing {paginationInfo.startIndex + 1} to {paginationInfo.endIndex} of {paginationInfo.totalItems} entries
+                  </span>
+                  <select 
+                    value={itemsPerPage} 
+                    onChange={(e) => {
+                      setItemsPerPage(parseInt(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="ml-4 px-2 py-1 border rounded text-sm"
+                  >
+                    <option value={5}>5 per page</option>
+                    <option value={10}>10 per page</option>
+                    <option value={25}>25 per page</option>
+                    <option value={50}>50 per page</option>
+                  </select>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="btn-sm"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                  </Button>
+                  
+                  <span className="text-sm text-gray-600">
+                    Page {currentPage} of {paginationInfo.totalPages}
+                  </span>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(Math.min(paginationInfo.totalPages, currentPage + 1))}
+                    disabled={currentPage === paginationInfo.totalPages}
+                    className="btn-sm"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>
