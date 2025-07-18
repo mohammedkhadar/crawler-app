@@ -40,6 +40,10 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Fixed TypeScript compilation errors and updated configuration for proper code emission
 - Enhanced stop button functionality with proper cancellation handling in broken link checking
 - Resolved crawler stop issue by adding cancellation channels to long-running operations
+- Fixed port configuration issues preventing application startup (changed frontend from port 80 to 5000)
+- Updated README.md with comprehensive local development instructions including troubleshooting section
+- Added detailed API documentation and project structure guide for developers
+- Application now runs successfully with backend on port 8000 and frontend on port 5000
 
 ## User Preferences
 
