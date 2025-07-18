@@ -25,6 +25,13 @@ const Dashboard = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [sortField, setSortField] = useState('url');
   const [sortDirection, setSortDirection] = useState('asc');
+  const [filters, setFilters] = useState({
+    url: '',
+    title: '',
+    html_version: '',
+    status: '',
+    links: ''
+  });
 
   useEffect(() => {
     fetchUrls();
@@ -179,10 +186,38 @@ const Dashboard = () => {
     setCurrentPage(1); // Reset to first page when sorting
   };
 
+  // Filter function
+  const handleFilterChange = (field, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  // Get filtered URLs
+  const getFilteredUrls = () => {
+    return urls.filter(url => {
+      const matchesUrl = url.url.toLowerCase().includes(filters.url.toLowerCase());
+      const matchesTitle = (url.title || '').toLowerCase().includes(filters.title.toLowerCase());
+      const matchesHtmlVersion = (url.html_version || '').toLowerCase().includes(filters.html_version.toLowerCase());
+      const matchesStatus = url.status.toLowerCase().includes(filters.status.toLowerCase());
+      
+      let matchesLinks = true;
+      if (filters.links) {
+        const totalLinks = (url.internal_links || 0) + (url.external_links || 0);
+        matchesLinks = totalLinks.toString().includes(filters.links);
+      }
+      
+      return matchesUrl && matchesTitle && matchesHtmlVersion && matchesStatus && matchesLinks;
+    });
+  };
+
   // Get sorted and paginated data
   const getSortedAndPaginatedUrls = () => {
-    // Sort URLs
-    const sorted = [...urls].sort((a, b) => {
+    // First filter, then sort URLs
+    const filteredUrls = getFilteredUrls();
+    const sorted = [...filteredUrls].sort((a, b) => {
       let aValue, bValue;
       
       if (sortField === 'links') {
@@ -225,15 +260,16 @@ const Dashboard = () => {
 
   // Get pagination info
   const getPaginationInfo = () => {
-    const totalPages = Math.ceil(urls.length / itemsPerPage);
+    const filteredUrls = getFilteredUrls();
+    const totalPages = Math.ceil(filteredUrls.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = Math.min(startIndex + itemsPerPage, urls.length);
+    const endIndex = Math.min(startIndex + itemsPerPage, filteredUrls.length);
     
     return {
       totalPages,
       startIndex,
       endIndex,
-      totalItems: urls.length
+      totalItems: filteredUrls.length
     };
   };
 
@@ -457,6 +493,77 @@ const Dashboard = () => {
                       </TableHead>
                       <TableHead className="w-[10%]">Actions</TableHead>
                     </TableRow>
+                    <TableRow>
+                      <TableHead className="w-[5%]">
+                        {/* Empty cell for checkbox column */}
+                      </TableHead>
+                      <TableHead className="w-[30%]">
+                        <Input
+                          type="text"
+                          placeholder="Filter by URL..."
+                          value={filters.url}
+                          onChange={(e) => handleFilterChange('url', e.target.value)}
+                          className="h-8 text-sm"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[20%]">
+                        <Input
+                          type="text"
+                          placeholder="Filter by title..."
+                          value={filters.title}
+                          onChange={(e) => handleFilterChange('title', e.target.value)}
+                          className="h-8 text-sm"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[10%]">
+                        <Input
+                          type="text"
+                          placeholder="Filter by version..."
+                          value={filters.html_version}
+                          onChange={(e) => handleFilterChange('html_version', e.target.value)}
+                          className="h-8 text-sm"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[12%]">
+                        <select
+                          value={filters.status}
+                          onChange={(e) => handleFilterChange('status', e.target.value)}
+                          className="h-8 w-full px-2 text-sm border rounded"
+                        >
+                          <option value="">All Status</option>
+                          <option value="pending">Pending</option>
+                          <option value="crawling">Crawling</option>
+                          <option value="completed">Completed</option>
+                          <option value="error">Error</option>
+                          <option value="stopped">Stopped</option>
+                        </select>
+                      </TableHead>
+                      <TableHead className="w-[8%]">
+                        <Input
+                          type="number"
+                          placeholder="Links..."
+                          value={filters.links}
+                          onChange={(e) => handleFilterChange('links', e.target.value)}
+                          className="h-8 text-sm"
+                        />
+                      </TableHead>
+                      <TableHead className="w-[10%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setFilters({
+                            url: '',
+                            title: '',
+                            html_version: '',
+                            status: '',
+                            links: ''
+                          })}
+                          className="h-8 px-2 text-sm"
+                        >
+                          Clear
+                        </Button>
+                      </TableHead>
+                    </TableRow>
                   </TableHeader>
                   <TableBody>
                     {paginatedUrls.map((url) => (
@@ -594,7 +701,7 @@ const Dashboard = () => {
               </div>
             )}
             
-            {urls.length > 0 && (
+            {getFilteredUrls().length > 0 && (
               <div className="flex items-center justify-between px-4 py-4 border-t">
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-600">
