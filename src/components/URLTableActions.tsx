@@ -1,7 +1,7 @@
-import React from 'react';
-import { Play, Square, Trash2 } from 'lucide-react';
-import { Button } from './ui/button';
-import { URL } from '../types';
+import React from "react";
+import { Play, Square, Trash2 } from "lucide-react";
+import { Button } from "./ui/button";
+import { URL } from "../types";
 
 interface URLTableActionsProps {
   selectedIds: Set<string>;
@@ -14,24 +14,26 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
   selectedIds,
   urls,
   bulkActionLoading,
-  onBulkAction
+  onBulkAction,
 }) => {
   if (selectedIds.size === 0) return null;
 
-  const hasActiveCrawls = urls.some(url => 
-    selectedIds.has(url.id) && (url.status === 'crawling' || url.status === 'pending')
+  const hasActiveCrawls = urls.some(
+    (url) =>
+      selectedIds.has(url.id) &&
+      (url.status === "crawling" || url.status === "pending"),
   );
 
-  const activeCount = Array.from(selectedIds).filter(id => {
-    const url = urls.find(u => u.id === id);
-    return url && (url.status === 'crawling' || url.status === 'pending');
+  const activeCount = Array.from(selectedIds).filter((id) => {
+    const url = urls.find((u) => u.id === id);
+    return url && (url.status === "crawling" || url.status === "pending");
   }).length;
 
   return (
-    <div className="flex justify-between items-center py-4 mt-4">
+    <div className="flex justify-between items-center py-8 mt-4">
       <div className="btn-group">
         <Button
-          onClick={() => onBulkAction('start')}
+          onClick={() => onBulkAction("start")}
           disabled={bulkActionLoading}
           variant="outline"
           size="sm"
@@ -42,7 +44,7 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
         </Button>
         {hasActiveCrawls && (
           <Button
-            onClick={() => onBulkAction('stop')}
+            onClick={() => onBulkAction("stop")}
             disabled={bulkActionLoading}
             variant="outline"
             size="sm"
@@ -53,7 +55,7 @@ export const URLTableActions: React.FC<URLTableActionsProps> = ({
           </Button>
         )}
         <Button
-          onClick={() => onBulkAction('delete')}
+          onClick={() => onBulkAction("delete")}
           disabled={bulkActionLoading}
           variant="destructive"
           size="sm"
