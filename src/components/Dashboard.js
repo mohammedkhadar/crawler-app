@@ -337,10 +337,14 @@ const Dashboard = () => {
                           </Button>
                         </TableCell>
                         <TableCell className="font-medium cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                          <div className="max-w-xs truncate text-sm">{url.url}</div>
+                          <div className="table-cell-url text-sm" title={url.url}>{url.url}</div>
                         </TableCell>
-                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.title || 'N/A'}</TableCell>
-                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.html_version || 'N/A'}</TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>
+                          <div className="table-cell-title" title={url.title || 'N/A'}>{url.title || 'N/A'}</div>
+                        </TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>
+                          <div className="table-cell-ellipsis" title={url.html_version || 'N/A'}>{url.html_version || 'N/A'}</div>
+                        </TableCell>
                         <TableCell className="cursor-pointer" onClick={() => setSelectedUrl(url)}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             {url.status === 'pending' && (

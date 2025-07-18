@@ -24,6 +24,9 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Added proper error handling for duplicate URLs with 409 Conflict status response
 - Updated frontend to display user-friendly error messages for duplicate URL attempts
 - Improved robustness of stop mechanism with forced status updates and job cleanup
+- Added table column ellipsis functionality for large text values with hover tooltips
+- Implemented fixed table layout with proper text truncation for URL, title, and HTML version columns
+- Enhanced table styling with overflow handling and responsive column widths
 
 ## User Preferences
 
