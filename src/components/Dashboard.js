@@ -183,21 +183,37 @@ const Dashboard = () => {
   const getSortedAndPaginatedUrls = () => {
     // Sort URLs
     const sorted = [...urls].sort((a, b) => {
-      let aValue = a[sortField];
-      let bValue = b[sortField];
+      let aValue, bValue;
       
-      // Handle null/undefined values
-      if (aValue === null || aValue === undefined) aValue = '';
-      if (bValue === null || bValue === undefined) bValue = '';
-      
-      // Convert to string for comparison
-      aValue = String(aValue).toLowerCase();
-      bValue = String(bValue).toLowerCase();
-      
-      if (sortDirection === 'asc') {
-        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      if (sortField === 'links') {
+        // For links, calculate total links count
+        aValue = (a.internal_links || 0) + (a.external_links || 0);
+        bValue = (b.internal_links || 0) + (b.external_links || 0);
+        
+        // Numeric comparison for links
+        if (sortDirection === 'asc') {
+          return aValue - bValue;
+        } else {
+          return bValue - aValue;
+        }
       } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+        // String comparison for other fields
+        aValue = a[sortField];
+        bValue = b[sortField];
+        
+        // Handle null/undefined values
+        if (aValue === null || aValue === undefined) aValue = '';
+        if (bValue === null || bValue === undefined) bValue = '';
+        
+        // Convert to string for comparison
+        aValue = String(aValue).toLowerCase();
+        bValue = String(bValue).toLowerCase();
+        
+        if (sortDirection === 'asc') {
+          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+        } else {
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+        }
       }
     });
 
@@ -426,7 +442,19 @@ const Dashboard = () => {
                           )}
                         </Button>
                       </TableHead>
-                      <TableHead className="w-[8%]">Links</TableHead>
+                      <TableHead className="w-[8%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSort('links')}
+                          className="h-8 p-0 font-semibold hover:bg-transparent"
+                        >
+                          Links
+                          {sortField === 'links' && (
+                            sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                          )}
+                        </Button>
+                      </TableHead>
                       <TableHead className="w-[10%]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
