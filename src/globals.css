@@ -121,6 +121,12 @@ tr:hover {
   white-space: nowrap;
 }
 
+.table-cell-html-version {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 /* Basic card styles */
 .card {
   background: white;

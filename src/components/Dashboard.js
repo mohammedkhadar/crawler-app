@@ -347,7 +347,18 @@ const Dashboard = () => {
                           <div className="table-cell-title" title={url.title || 'N/A'}>{url.title || 'N/A'}</div>
                         </TableCell>
                         <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>
-                          <div className="table-cell-ellipsis" title={url.html_version || 'N/A'}>{url.html_version || 'N/A'}</div>
+                          <div className="table-cell-html-version" title={url.html_version || 'N/A'}>
+                            <span style={{ 
+                              backgroundColor: url.html_version ? '#e3f2fd' : '#f5f5f5',
+                              color: url.html_version ? '#1976d2' : '#666',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              fontWeight: '500'
+                            }}>
+                              {url.html_version || 'N/A'}
+                            </span>
+                          </div>
                         </TableCell>
                         <TableCell className="cursor-pointer" onClick={() => setSelectedUrl(url)}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

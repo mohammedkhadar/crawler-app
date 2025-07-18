@@ -30,6 +30,8 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Added consistent button padding and spacing across all UI elements
 - Implemented button size classes (btn-sm, btn-md, btn-lg) for better visual hierarchy
 - Added button grouping with proper spacing for bulk actions and navigation
+- Updated button styling to use only horizontal padding (padding-x) for cleaner appearance
+- Enhanced HTML version display in table with styled badges for better visibility
 
 ## User Preferences
 
