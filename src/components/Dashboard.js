@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import URLDetailView from './URLDetailView';
-import URLTable from './URLTable';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Plus, User, LogOut } from 'lucide-react';
+import { Badge } from './ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Plus, Trash2, RotateCcw, User, LogOut, Play, Square, CheckSquare, Square as UncheckedSquare } from 'lucide-react';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -291,15 +292,150 @@ const Dashboard = () => {
                 <p className="text-muted-foreground">No URLs added yet. Add your first URL above!</p>
               </div>
             ) : (
-              <URLTable
-                urls={urls}
-                selectedIds={selectedIds}
-                onSelectionChange={setSelectedIds}
-                onBulkAction={handleBulkAction}
-                bulkActionLoading={bulkActionLoading}
-                onViewDetails={setSelectedUrl}
-                onDeleteUrl={deleteUrl}
-              />
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[5%]">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={toggleSelectAll}
+                          className="h-8 w-8 p-0"
+                        >
+                          {selectedIds.size === urls.length && urls.length > 0 ? 
+                            <CheckSquare className="h-4 w-4" /> : 
+                            <UncheckedSquare className="h-4 w-4" />
+                          }
+                        </Button>
+                      </TableHead>
+                      <TableHead className="w-[30%]">URL</TableHead>
+                      <TableHead className="w-[20%]">Title</TableHead>
+                      <TableHead className="w-[10%]">HTML Version</TableHead>
+                      <TableHead className="w-[12%]">Status</TableHead>
+                      <TableHead className="w-[8%]">Links</TableHead>
+                      <TableHead className="w-[10%]">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {urls.map((url) => (
+                      <TableRow key={url.id} className="hover:bg-muted/50">
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSelectUrl(url.id);
+                            }}
+                            className="h-8 w-8 p-0"
+                          >
+                            {selectedIds.has(url.id) ? 
+                              <CheckSquare className="h-4 w-4" /> : 
+                              <UncheckedSquare className="h-4 w-4" />
+                            }
+                          </Button>
+                        </TableCell>
+                        <TableCell className="font-medium cursor-pointer" onClick={() => setSelectedUrl(url)}>
+                          <div className="max-w-xs truncate text-sm">{url.url}</div>
+                        </TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.title || 'N/A'}</TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.html_version || 'N/A'}</TableCell>
+                        <TableCell className="cursor-pointer" onClick={() => setSelectedUrl(url)}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {url.status === 'pending' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#f59e0b',
+                                borderRadius: '50%',
+                                animation: 'pulse 2s infinite'
+                              }} />
+                            )}
+                            {url.status === 'crawling' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#3b82f6',
+                                borderRadius: '50%',
+                                animation: 'pulse 1s infinite'
+                              }} />
+                            )}
+                            {url.status === 'completed' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#10b981',
+                                borderRadius: '50%'
+                              }} />
+                            )}
+                            {url.status === 'error' && (
+                              <div style={{ 
+                                width: '12px', 
+                                height: '12px', 
+                                backgroundColor: '#ef4444',
+                                borderRadius: '50%'
+                              }} />
+                            )}
+                            <div style={{ minWidth: '80px' }}>
+                              <Badge variant={
+                                url.status === 'completed' 
+                                  ? 'success' 
+                                  : url.status === 'crawling'
+                                  ? 'info'
+                                  : url.status === 'error'
+                                  ? 'destructive'
+                                  : url.status === 'pending'
+                                  ? 'warning'
+                                  : 'secondary'
+                              }>
+                                {url.status === 'pending' ? 'Queued' : 
+                                 url.status === 'crawling' ? 'Running' : 
+                                 url.status === 'completed' ? 'Done' : 
+                                 url.status === 'error' ? 'Error' : 
+                                 url.status}
+                              </Badge>
+                              {url.status === 'crawling' && (
+                                <div style={{ 
+                                  width: '100%', 
+                                  height: '4px', 
+                                  backgroundColor: '#e5e7eb',
+                                  borderRadius: '2px',
+                                  marginTop: '4px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{ 
+                                    width: '100%', 
+                                    height: '100%',
+                                    backgroundColor: '#3b82f6',
+                                    animation: 'progress-bar 2s infinite'
+                                  }} />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm cursor-pointer" onClick={() => setSelectedUrl(url)}>{url.internal_links + url.external_links}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteUrl(url.id);
+                              }}
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-2 text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>

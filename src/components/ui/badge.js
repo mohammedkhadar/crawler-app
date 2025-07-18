@@ -1,23 +1,37 @@
-import React from 'react';
-import { cn } from '../../lib/utils';
+import React from "react";
 
-const Badge = ({ className, variant = 'default', ...props }) => {
-  const variants = {
-    default: 'bg-gray-100 text-gray-800',
-    secondary: 'bg-gray-100 text-gray-800',
-    destructive: 'bg-red-100 text-red-800',
-    outline: 'border border-gray-300 bg-white text-gray-800',
+const Badge = ({ variant = "default", className, children, ...props }) => {
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'success':
+        return { backgroundColor: '#28a745', color: 'white' };
+      case 'info':
+        return { backgroundColor: '#17a2b8', color: 'white' };
+      case 'warning':
+        return { backgroundColor: '#ffc107', color: 'black' };
+      case 'destructive':
+        return { backgroundColor: '#dc3545', color: 'white' };
+      default:
+        return { backgroundColor: '#6c757d', color: 'white' };
+    }
   };
 
   return (
-    <div
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-        variants[variant],
-        className
-      )}
+    <span 
+      className={`${className || ''}`}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: '500',
+        ...getVariantStyles()
+      }}
       {...props}
-    />
+    >
+      {children}
+    </span>
   );
 };
 
