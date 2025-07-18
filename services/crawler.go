@@ -108,7 +108,7 @@ func (c *Crawler) CrawlURL(urlID string) {
         }
 
         // Check for broken links (this takes time, so add cancellation check)
-        brokenLinks := c.checkBrokenLinks(doc, urlRecord.URL)
+        brokenLinks := c.checkBrokenLinks(doc, urlRecord.URL, stopChan)
         data["broken_links"] = len(brokenLinks)
 
         // Store broken links
@@ -259,10 +259,22 @@ type BrokenLink struct {
         Error      string
 }
 
-func (c *Crawler) checkBrokenLinks(doc *goquery.Document, baseURL string) []BrokenLink {
+func (c *Crawler) checkBrokenLinks(doc *goquery.Document, baseURL string, stopChan <-chan bool) []BrokenLink {
         var brokenLinks []BrokenLink
         var wg sync.WaitGroup
         var mutex sync.Mutex
+
+        // Create a done channel to signal cancellation to all goroutines
+        done := make(chan struct{})
+        
+        // Monitor for cancellation
+        go func() {
+                select {
+                case <-stopChan:
+                        close(done)
+                case <-done:
+                }
+        }()
 
         // Limit concurrent requests
         semaphore := make(chan struct{}, 10)
@@ -290,8 +302,23 @@ func (c *Crawler) checkBrokenLinks(doc *goquery.Document, baseURL string) []Brok
                 wg.Add(1)
                 go func(linkURL string) {
                         defer wg.Done()
+                        
+                        // Check if we should stop before acquiring semaphore
+                        select {
+                        case <-done:
+                                return
+                        default:
+                        }
+                        
                         semaphore <- struct{}{}
                         defer func() { <-semaphore }()
+
+                        // Check if we should stop before making HTTP request
+                        select {
+                        case <-done:
+                                return
+                        default:
+                        }
 
                         resp, err := c.httpClient.Head(linkURL)
                         if err != nil {
