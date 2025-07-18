@@ -188,6 +188,7 @@ const Dashboard = () => {
               onClick={logout}
               variant="destructive"
               size="sm"
+              className="btn-sm"
             >
               <LogOut style={{ width: '16px', height: '16px', marginRight: '8px' }} />
               Logout
@@ -232,7 +233,7 @@ const Dashboard = () => {
                 type="submit"
                 disabled={adding}
                 variant="gradient"
-                className="h-10 px-4"
+                className="h-10 px-4 btn-md"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 {adding ? 'Adding...' : 'Add URL'}
@@ -249,12 +250,13 @@ const Dashboard = () => {
                 <CardDescription className="text-sm">Click on a row to view detailed analysis</CardDescription>
               </div>
               {selectedIds.size > 0 && (
-                <div className="flex gap-2">
+                <div className="btn-group">
                   <Button
                     onClick={() => handleBulkAction('start')}
                     disabled={bulkActionLoading}
                     variant="outline"
                     size="sm"
+                    className="btn-sm"
                   >
                     <Play className="h-4 w-4 mr-2" />
                     Start ({selectedIds.size})
@@ -265,6 +267,7 @@ const Dashboard = () => {
                       disabled={bulkActionLoading}
                       variant="outline"
                       size="sm"
+                      className="btn-sm"
                     >
                       <Square className="h-4 w-4 mr-2" />
                       Stop ({Array.from(selectedIds).filter(id => {
@@ -278,6 +281,7 @@ const Dashboard = () => {
                     disabled={bulkActionLoading}
                     variant="destructive"
                     size="sm"
+                    className="btn-sm"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete ({selectedIds.size})
@@ -301,7 +305,7 @@ const Dashboard = () => {
                           variant="ghost"
                           size="sm"
                           onClick={toggleSelectAll}
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 btn-sm"
                         >
                           {selectedIds.size === urls.length && urls.length > 0 ? 
                             <CheckSquare className="h-4 w-4" /> : 
@@ -328,7 +332,7 @@ const Dashboard = () => {
                               e.stopPropagation();
                               toggleSelectUrl(url.id);
                             }}
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 p-0 btn-sm"
                           >
                             {selectedIds.has(url.id) ? 
                               <CheckSquare className="h-4 w-4" /> : 
@@ -429,7 +433,7 @@ const Dashboard = () => {
                               }}
                               variant="ghost"
                               size="sm"
-                              className="h-8 px-2 text-destructive hover:text-destructive"
+                              className="h-8 px-2 text-destructive hover:text-destructive btn-sm"
                             >
                               <Trash2 className="h-3 w-3" />
                             </Button>

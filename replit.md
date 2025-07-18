@@ -27,6 +27,9 @@ This is a full-stack web application for website analysis and crawling. The syst
 - Added table column ellipsis functionality for large text values with hover tooltips
 - Implemented fixed table layout with proper text truncation for URL, title, and HTML version columns
 - Enhanced table styling with overflow handling and responsive column widths
+- Added consistent button padding and spacing across all UI elements
+- Implemented button size classes (btn-sm, btn-md, btn-lg) for better visual hierarchy
+- Added button grouping with proper spacing for bulk actions and navigation
 
 ## User Preferences
 

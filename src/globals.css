@@ -31,6 +31,8 @@ button {
   background-color: #007bff;
   color: white;
   cursor: pointer;
+  padding: 10px 16px;
+  margin: 4px;
 }
 
 button:hover {
@@ -40,6 +42,32 @@ button:hover {
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* Additional button padding classes */
+.btn-sm {
+  padding: 6px 12px;
+  margin: 2px;
+}
+
+.btn-md {
+  padding: 8px 16px;
+  margin: 4px;
+}
+
+.btn-lg {
+  padding: 12px 20px;
+  margin: 6px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-group button {
+  margin: 0;
 }
 
 /* Basic table styles */
