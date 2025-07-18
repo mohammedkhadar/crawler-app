@@ -399,7 +399,7 @@ const Dashboard = () => {
             </div>
             
             {/* Global Search Box */}
-            <div className="mb-4">
+            <div className="mb-4 flex justify-center">
               <div className="flex items-center gap-2 max-w-md">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
