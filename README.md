@@ -2,6 +2,8 @@
 
 A full-stack web application for website analysis and crawling built with React/TypeScript frontend and Go/SQLite backend.
 
+[Recording](https://www.loom.com/share/2cb3ff95c10d442f9c41597ab19374ef?sid=ae37a0c6-9b94-4f9b-b445-3a89bde1d0dc)
+
 ## Features
 
 - **URL Management**: Add, edit, and delete URLs for analysis
