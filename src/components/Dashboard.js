@@ -399,21 +399,19 @@ const Dashboard = () => {
             </div>
             
             {/* Global Search Box */}
-            <div className="mb-4 flex justify-center">
+            <div className="mb-4">
               <div className="flex items-center gap-2 max-w-md">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Search all columns..."
-                    value={globalSearch}
-                    onChange={(e) => {
-                      setGlobalSearch(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    className="pl-10 pr-4 w-full h-9"
-                  />
-                </div>
+                <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                <Input
+                  type="text"
+                  placeholder="Search all columns..."
+                  value={globalSearch}
+                  onChange={(e) => {
+                    setGlobalSearch(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="flex-1 h-9"
+                />
                 {globalSearch && (
                   <Button
                     variant="ghost"
