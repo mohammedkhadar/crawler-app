@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>8/14</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/14</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -115,12 +115,23 @@
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -131,18 +142,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -165,36 +165,36 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from "react";
 &nbsp;
-const Button = ({ variant = <span class="branch-0 cbranch-no" title="branch not covered" >"default",</span> size = <span class="branch-0 cbranch-no" title="branch not covered" >"default",</span> className, children, ...props }) =&gt; {
-  const getVariantStyles = () =&gt; {
-    switch (variant) {
+const Button = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >({</span> variant = <span class="branch-0 cbranch-no" title="branch not covered" >"default",</span> size = <span class="branch-0 cbranch-no" title="branch not covered" >"default",</span> className, children, ...props }) =&gt; {</span>
+  const getVariantStyles = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    switch (variant) {</span>
       case 'destructive':
-        return { backgroundColor: '#dc3545', color: 'white' };
-<span class="branch-1 cbranch-no" title="branch not covered" >      case 'outline':</span>
+<span class="cstat-no" title="statement not covered" >        return { backgroundColor: '#dc3545', color: 'white' };</span>
+      case 'outline':
 <span class="cstat-no" title="statement not covered" >        return { backgroundColor: 'transparent', color: '#007bff', border: '1px solid #007bff' };</span>
-<span class="branch-2 cbranch-no" title="branch not covered" >      case 'secondary':</span>
+      case 'secondary':
 <span class="cstat-no" title="statement not covered" >        return { backgroundColor: '#6c757d', color: 'white' };</span>
-<span class="branch-3 cbranch-no" title="branch not covered" >      case 'ghost':</span>
+      case 'ghost':
 <span class="cstat-no" title="statement not covered" >        return { backgroundColor: 'transparent', color: '#333', border: 'none' };</span>
-<span class="branch-4 cbranch-no" title="branch not covered" >      default:</span>
+      default:
 <span class="cstat-no" title="statement not covered" >        return { backgroundColor: '#007bff', color: 'white' };</span>
     }
   };
 &nbsp;
-  const getSizeStyles = () =&gt; {
-    switch (size) {
+  const getSizeStyles = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    switch (size) {</span>
       case 'sm':
-        return { padding: '4px 8px', fontSize: '12px' };
-<span class="branch-1 cbranch-no" title="branch not covered" >      case 'lg':</span>
+<span class="cstat-no" title="statement not covered" >        return { padding: '4px 8px', fontSize: '12px' };</span>
+      case 'lg':
 <span class="cstat-no" title="statement not covered" >        return { padding: '12px 24px', fontSize: '16px' };</span>
-<span class="branch-2 cbranch-no" title="branch not covered" >      default:</span>
+      default:
 <span class="cstat-no" title="statement not covered" >        return { padding: '8px 16px', fontSize: '14px' };</span>
     }
   };
 &nbsp;
-  return (
+<span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;button 
-      className={`${className || <span class="branch-1 cbranch-no" title="branch not covered" >''}</span>`}
+      className={`${className || ''}`}
       style={{
         border: '1px solid transparent',
         borderRadius: '4px',
@@ -220,7 +220,7 @@ export { Button };</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-19T19:21:23.526Z
+                at 2025-07-19T20:15:38.361Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
