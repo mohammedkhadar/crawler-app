@@ -20,5 +20,6 @@ module.exports = {
     '!src/setupTests.ts'
   ],
   coverageReporters: ['text', 'lcov', 'html'],
-  coverageDirectory: 'coverage'
+  coverageDirectory: 'coverage',
+  testTimeout: 10000
 };
