@@ -32,8 +32,8 @@ export const formatRelativeTime = (dateString: string): string => {
 
 export const isValidURL = (string: string): boolean => {
   try {
-    new URL(string);
-    return true;
+    const url = new URL(string);
+    return url.protocol === 'http:' || url.protocol === 'https:';
   } catch {
     return false;
   }
@@ -41,18 +41,18 @@ export const isValidURL = (string: string): boolean => {
 
 export const getStatusColor = (status: string): string => {
   switch (status) {
-    case 'queued':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'running':
-      return 'bg-blue-100 text-blue-800';
     case 'completed':
-      return 'bg-green-100 text-green-800';
-    case 'error':
-      return 'bg-red-100 text-red-800';
+      return 'green';
+    case 'pending':
+      return 'yellow';
+    case 'crawling':
+      return 'blue';
+    case 'failed':
+      return 'red';
     case 'stopped':
-      return 'bg-gray-100 text-gray-800';
+      return 'gray';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'gray';
   }
 };
 
@@ -121,6 +121,10 @@ export const searchBy = <T>(array: T[], keys: (keyof T)[], query: string): T[] =
 
 export const generateId = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
+export const formatNumber = (num: number): string => {
+  return num.toLocaleString();
 };
 
 export const classNames = (...classes: (string | undefined | null | false)[]): string => {

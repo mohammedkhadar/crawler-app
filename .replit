@@ -24,6 +24,14 @@ args = "Backend Server"
 task = "workflow.run"
 args = "Frontend Development Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Test Runner"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Test Coverage"
+
 [[workflows.workflow]]
 name = "Install Go Dependencies"
 author = "agent"
@@ -49,6 +57,22 @@ author = "agent"
 task = "shell.exec"
 args = "npx webpack serve --mode development"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Test Runner"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx jest"
+
+[[workflows.workflow]]
+name = "Test Coverage"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx jest --coverage"
 
 [[ports]]
 localPort = 80
